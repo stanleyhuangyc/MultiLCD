@@ -11,14 +11,24 @@ This library encapsulate several libraries for various Arduino LCD shield or mod
 * LCD1602 shield
 * ZT I2C OLED module
 
-With this library, the sketch code needs only very little change to switch from one shield to another for display.
-To use a specific shield or module as the display of Arduino, all needed is to use one of following declarations:
+With this library, the sketch code needs only very little change to switch from one LCD shield to another.
+To use a specific shield or module as the display for Arduino, you need to include library header at the beginning of the sketch.
 
-    LCD_OLED lcd; /* for I2C OLED module */
+    #include <MultiLCD.h>
 
-    LCD_PCD8544 lcd; /* for LCD4884 shield or Nokia 5100 screen module */
+And use one of following declarations before your code.
 
-    LCD_1602 lcd; /* for LCD1602 shield */
+For I2C OLED module:
+
+    LCD_OLED lcd;
+    
+For LCD4884 shield or Nokia 5100 module:
+    
+    LCD_PCD8544 lcd;
+
+For LCD1602 shield:
+
+    LCD_1602 lcd;
 
 The library provides easy-to-use APIs for text display, including:
 
