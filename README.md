@@ -11,6 +11,8 @@ This library encapsulate several libraries for various Arduino LCD shield or mod
 * LCD1602 shield
 * ZT I2C OLED module
 
+![Arduino LCD shields](http://www.arduinodev.com/wp-content/uploads/2013/03/arduino_lcd_shields-300x195.jpg)
+
 With this library, the sketch code needs only very little change to switch from one LCD shield to another.
 To use a specific shield or module as the display for Arduino, you need to include library header at the beginning of the sketch.
 
