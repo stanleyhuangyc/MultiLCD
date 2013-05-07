@@ -4,10 +4,10 @@ MultiLCD Library for Arduino
 Written by Stanley Huang, distributed under GPL.
 For more information, please visit http://www.arduinodev.com
 
-This library encapsulate several libraries for various Arduino LCD shield or module into a set of unified APIs. It supports these hardware:
+This library encapsulate several libraries for various Arduino LCD/LED display shields or modules into a set of unified APIs. It supports these hardware:
 
 * DFRobot LCD4884 shield
-* Nokia 5100 LCD module
+* Nokia 3310/5100 LCD module
 * LCD1602 shield
 * ZT I2C OLED module
 
