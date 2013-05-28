@@ -1,3 +1,16 @@
+/*************************************************************************
+* Arduino Text Display Library for Multiple LCDs
+* Distributed under GPL v2.0
+* Copyright (c) 2013 Stanley Huang <stanleyhuangyc@live.com>
+* All rights reserved.
+*************************************************************************/
+
+typedef enum {
+    FONT_SIZE_SMALL = 0,
+    FONT_SIZE_MEDIUM,
+    FONT_SIZE_LARGE
+} FONT_SIZE;
+
 extern const PROGMEM unsigned char font16x32[][32];
 extern const PROGMEM unsigned char font5x8[][5];
 
@@ -10,6 +23,10 @@ public:
     virtual byte getLines() = 0;
     virtual byte getCols() = 0;
     virtual void changeLine() {}
+    void printInt(unsigned int value, FONT_SIZE size, byte padding = 0);
+    void printLong(unsigned long value, FONT_SIZE size, byte padding = 0);
+protected:
+    virtual void writeDigit(byte n, FONT_SIZE size) {}
 };
 
 class LCD_PCD8544 : public LCD_Common, public PCD8544
@@ -17,7 +34,6 @@ class LCD_PCD8544 : public LCD_Common, public PCD8544
 public:
     byte getLines() { return 6; }
     byte getCols() { return 14; }
-    void printLarge(const char* s);
     void backlight(bool on)
     {
         pinMode(7, OUTPUT);
@@ -28,30 +44,29 @@ public:
         setCursor(0, line);
         for (byte i = 14; i > 0; i--) write(' ');
     }
+    void printLarge(const char* s);
+private:
+    void writeDigit(byte n, FONT_SIZE size = FONT_SIZE_MEDIUM);
 };
 
 #include "ZtLib.h"
 
 #define OLED_ADDRESS 0x27
 
-class LCD_OLED : public LCD_Common, public ZtLib
+class LCD_ZTOLED : public LCD_Common, public ZtLib, public Print
 {
 public:
     byte getLines() { return 4; }
     byte getCols() { return 16; }
-    void setCursor(byte column, byte line)
-    {
-        m_column = column << 3;
-        m_line = line << 1;
-    }
+    void setCursor(byte column, byte line);
     void changeLine()
     {
         m_column = 0;
-        m_line += 2;
+        m_page += 2;
     }
-    void write(char c);
+    size_t write(uint8_t c);
     void print(const char* s);
-    void printLarge(const char* s);
+    void writeDigit(byte n, FONT_SIZE size = FONT_SIZE_MEDIUM);
     void clear();
     void begin();
     void backlight(bool on) {}
@@ -62,7 +77,7 @@ public:
     }
 private:
     unsigned char m_column;
-    unsigned char m_line;
+    unsigned char m_page;
 };
 
 #include "LCD4Bit_mod.h"
@@ -71,9 +86,10 @@ class LCD_1602 : public LCD_Common, public LCD4Bit_mod
 public:
     byte getLines() { return 2; }
     byte getCols() { return 16; }
-    void printLarge(const char* s)
+    void writeDigit(byte n, FONT_SIZE size = FONT_SIZE_SMALL)
     {
-        print(s);
+        if (size == FONT_SIZE_SMALL)
+            write(n >= 0 && n <= 9 ? '0' + n : ' ');
     }
     void clearLine(byte line)
     {
@@ -82,3 +98,21 @@ public:
     }
 };
 
+#include "SSD1306.h"
+
+class LCD_SSD1306 : public LCD_Common, public SSD1306, public Print
+{
+public:
+    void setCursor(byte column, byte line);
+    void clear()
+    {
+        fill(0);
+    }
+    size_t write(uint8_t c);
+    byte getLines() { return 21; }
+    byte getCols() { return 8; }
+private:
+    void writeDigit(byte n, FONT_SIZE size);
+    byte m_col;
+    byte m_row;
+};

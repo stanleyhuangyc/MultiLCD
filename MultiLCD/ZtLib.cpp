@@ -522,7 +522,7 @@ int ZtLib::ScI2cMxSetLocation(uint8_t addr, uint8_t page,uint8_t column)
  *          3 .. data send, NACK received
  *          4 .. other twi error (lost bus arbitration, bus error, ..)
  */
-void ZtLib::ScI2cMxDisplayDot16x16(uint8_t addr, uint8_t page, uint8_t column, const char *str)
+void ZtLib::ScI2cMxDisplayDot16x16(uint8_t addr, uint8_t page, uint8_t column, unsigned char *str)
 {
     uint8_t buff[17];
     buff[0] = REG_DAT;
@@ -539,6 +539,18 @@ void ZtLib::ScI2cMxDisplayDot16x16(uint8_t addr, uint8_t page, uint8_t column, c
     }
     twi_writeTo(addr, buff, 17, 1, 1);
 }
+
+void ZtLib::ScI2cMxDisplayDot8x8(uint8_t addr, unsigned char *str)
+{
+    uint8_t buff[9];
+    buff[0] = REG_DAT;
+    for (int i=0; i<8; i++)
+    {
+       buff[i+1] = str[i];
+    }
+    twi_writeTo(addr, buff, 9, 1, 1);
+}
+
 /*
  * Function ScI2cMxDisplayArea
  * Desc     Set ZT.SC-I2CMx Display Area

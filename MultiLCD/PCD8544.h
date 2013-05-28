@@ -88,6 +88,9 @@ class PCD8544: public Print {
         // Draw a chart element at the current cursor position...
         void drawColumn(unsigned char lines, unsigned char value);
 
+        void draw8x8(const unsigned char *data);
+        void draw16x16(const unsigned char *data);
+
         void changeLine()
         {
             column = 0;

@@ -1,7 +1,15 @@
+/*************************************************************************
+* Arduino Text Display Library for Multiple LCDs
+* Distributed under GPL v2.0
+* Copyright (c) 2013 Stanley Huang <stanleyhuangyc@live.com>
+* All rights reserved.
+*************************************************************************/
+
 #include <Arduino.h>
+#include <Wire.h>
 #include "MultiLCD.h"
 
-const PROGMEM unsigned char font16x16[][32] = {
+const PROGMEM unsigned char digits16x16[][32] = {
 {0x00,0xE0,0xF8,0xFC,0xFE,0x1E,0x07,0x07,0x07,0x07,0x1E,0xFE,0xFC,0xF8,0xF0,0x00,0x00,0x07,0x0F,0x3F,0x3F,0x7C,0x70,0x70,0x70,0x70,0x7C,0x3F,0x1F,0x1F,0x07,0x00},/*0*/
 {0x00,0x00,0x00,0x06,0x07,0x07,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x7F,0x7F,0x7F,0x7F,0x00,0x00,0x00,0x00,0x00,0x00},/*1*/
 {0x00,0x38,0x3C,0x3E,0x3E,0x0F,0x07,0x07,0x07,0xCF,0xFF,0xFE,0xFE,0x38,0x00,0x00,0x00,0x40,0x40,0x60,0x70,0x78,0x7C,0x7E,0x7F,0x77,0x73,0x71,0x70,0x70,0x00,0x00},/*2*/
@@ -12,6 +20,19 @@ const PROGMEM unsigned char font16x16[][32] = {
 {0x00,0x07,0x07,0x07,0x07,0x07,0xC7,0xE7,0xF7,0xFF,0x7F,0x3F,0x1F,0x07,0x03,0x01,0x00,0x20,0x38,0x7C,0x7E,0x3F,0x0F,0x07,0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x00},/*7*/
 {0x00,0x00,0x00,0x1C,0xBE,0xFE,0xFF,0xE7,0xC3,0xC3,0xE7,0xFF,0xFE,0xBE,0x1C,0x00,0x00,0x00,0x0E,0x3F,0x3F,0x7F,0x71,0x60,0x60,0x60,0x71,0x7F,0x3F,0x3F,0x0F,0x00},/*8*/
 {0x00,0x78,0xFC,0xFE,0xFE,0x8F,0x07,0x07,0x07,0x07,0x8F,0xFE,0xFE,0xFC,0xF8,0x00,0x00,0x00,0x00,0x01,0x43,0x43,0x73,0x7B,0x7F,0x7F,0x1F,0x0F,0x07,0x03,0x00,0x00},/*9*/
+};
+
+const PROGMEM unsigned char digits8x8[][8] = {
+{0x3C,0x7E,0x83,0x81,0x81,0x7E,0x3C,0x00},/*"0",0*/
+{0x84,0x84,0x82,0xFF,0xFF,0x80,0x80,0x00},/*"1",1*/
+{0x84,0xC6,0xE1,0xA1,0xB1,0x9F,0x8E,0x00},/*"2",2*/
+{0x42,0xC3,0x81,0x89,0x89,0xFF,0x76,0x00},/*"3",3*/
+{0x20,0x38,0x24,0x22,0xFF,0xFF,0x20,0x00},/*"4",4*/
+{0x5F,0xDF,0x99,0x89,0x89,0xF9,0x70,0x00},/*"5",5*/
+{0x3C,0x7E,0x89,0x89,0x89,0xFB,0x72,0x00},/*"6",6*/
+{0x01,0x01,0xE1,0xF9,0x1D,0x07,0x01,0x00},/*"7",7*/
+{0x6E,0xFF,0x89,0x89,0x99,0xFF,0x76,0x00},/*"8",8*/
+{0x4E,0xDF,0x91,0x91,0x91,0x7F,0x3E,0x00},/*"9",9*/
 };
 
 // The 7-bit ASCII character set...
@@ -114,69 +135,207 @@ const PROGMEM unsigned char font5x8[][5] = {
   { 0x00, 0x00, 0x00, 0x00, 0x00 }   // 7f
 };
 
-void LCD_OLED::write(char c)
+void LCD_Common::printInt(unsigned int value, FONT_SIZE size, byte padding)
+{
+    bool start = false;
+    for (unsigned int den = 10000; den; den /= 10) {
+        byte v = (byte)(value / den);
+        value -= v * den;
+        if (v == 0 && !start) {
+            if (padding) {
+                writeDigit(-1, size);
+                padding--;
+            }
+            continue;
+        }
+        start = true;
+        writeDigit(v, size);
+    }
+}
+
+void LCD_Common::printLong(unsigned long value, FONT_SIZE size, byte padding)
+{
+    bool start = false;
+    for (unsigned long den = 1000000000; den; den /= 10) {
+        byte v = (byte)(value / den);
+        value -= v * den;
+        if (v == 0 && !start) {
+            if (padding) {
+                writeDigit(-1, size);
+                padding--;
+            }
+            continue;
+        }
+        start = true;
+        writeDigit(v, size);
+    }
+}
+
+void LCD_ZTOLED::setCursor(byte column, byte line)
+{
+    m_column = column << 3;
+    m_page = line << 1;
+    delay(1);
+    ScI2cMxSetLocation(OLED_ADDRESS, m_page, m_column);
+}
+
+size_t LCD_ZTOLED::write(uint8_t c)
 {
     char s[2] = {c};
-    ScI2cMxDisplay8x16Str(OLED_ADDRESS, m_line, m_column, s);
+    ScI2cMxDisplay8x16Str(OLED_ADDRESS, m_page, m_column, s);
     m_column += 8;
     if (m_column >= 128) {
         m_column = 0;
-        m_line += 2;
+        m_page += 2;
     }
 }
 
-void LCD_OLED::print(const char* s)
+void LCD_ZTOLED::print(const char* s)
 {
-    ScI2cMxDisplay8x16Str(OLED_ADDRESS, m_line, m_column, s);
+    ScI2cMxDisplay8x16Str(OLED_ADDRESS, m_page, m_column, s);
     m_column += (strlen(s) << 3);
-    m_line += (m_column >> 7) << 1;
+    m_page += (m_column >> 7) << 1;
     m_column %= 0x7f;
 }
 
-void LCD_OLED::printLarge(const char* s)
+void LCD_ZTOLED::writeDigit(byte n, FONT_SIZE size)
 {
-    delay(5);
-    while (*s) {
-        if (*s >= '0' && *s <= '9') {
-            char data[32];
-            memcpy_P(data, font16x16[*s - '0'], 32);
-            ScI2cMxDisplayDot16x16(OLED_ADDRESS, m_line, m_column, data);
+    if (size == FONT_SIZE_SMALL) {
+        unsigned char data[8];
+        if (n >= 0 && n <= 9) {
+            memcpy_P(data, digits8x8[n], 8);
         } else {
-            ScI2cMxFillArea(OLED_ADDRESS, m_line, m_line + 1, m_column, m_column + 16, 0);
+            memset(data, 0, sizeof(data));
         }
+        ScI2cMxDisplayDot8x8(OLED_ADDRESS, data);
+        m_column += 8;
+    } else if (size == FONT_SIZE_MEDIUM) {
+        write(n >= 0 && n <= 9 ? '0' + n : ' ');
+    } else {
+        unsigned char data[32];
+        if (n >= 0 && n <= 9) {
+            memcpy_P(data, digits16x16[n], 32);
+        } else {
+            memset(data, 0, sizeof(data));
+        }
+        ScI2cMxDisplayDot16x16(OLED_ADDRESS, m_page, m_column, data);
         m_column += 16;
-        if (m_column >= 128) {
-            m_column = 0;
-            m_line += 2;
-        }
-        s++;
     }
 }
 
-void LCD_OLED::clear()
+void LCD_ZTOLED::clear()
 {
     ScI2cMxFillArea(OLED_ADDRESS, 0, 7, 0, 127, 0);
     delay(10);
     setCursor(0, 0);
 }
 
-void LCD_OLED::begin()
+void LCD_ZTOLED::begin()
 {
     I2cInit();
     ScI2cMxReset(OLED_ADDRESS);
     delay(10);
 }
 
-void LCD_PCD8544::printLarge(const char* s)
+void LCD_PCD8544::writeDigit(byte n, FONT_SIZE size)
 {
-    while (*s) {
-        if (*s >= '0' && *s <= '9') {
-            unsigned char data[32];
-            memcpy_P(data, font16x16[*s - '0'], 32);
-            drawBitmap(data, 16, 16);
+    if (size == FONT_SIZE_SMALL) {
+        write(n >= 0 && n <= 9 ? '0' + n : ' ');
+    } else if (size == FONT_SIZE_MEDIUM) {
+        unsigned char data[8];
+        if (n >= 0 && n <= 9) {
+            memcpy_P(data, digits8x8[n], 8);
         } else {
-            column = (column + 16) % 84;
+            memset(data, 0, sizeof(data));
         }
-        s++;
+        draw8x8(data);
+    } else {
+        unsigned char data[32];
+        if (n >= 0 && n <= 9) {
+            memcpy_P(data, digits16x16[n], 32);
+        } else {
+            memset(data, 0, sizeof(data));
+        }
+        draw16x16(data);
+        //column += 16;
     }
+}
+
+void LCD_SSD1306::setCursor(byte column, byte line)
+{
+    m_col = column;
+    m_row = line;
+    ssd1306_command(0xB0 + m_row);//set page address
+    ssd1306_command(m_col & 0xf);//set lower column address
+    ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+}
+
+size_t LCD_SSD1306::write(uint8_t c)
+{
+    byte pgm_buffer[6];
+    memcpy_P(pgm_buffer, &font5x8[(c < ' ' || c > 0x7f) ? 0 : c - ' '], sizeof(pgm_buffer));
+    pgm_buffer[5] = 0;
+
+    Wire.beginTransmission(_i2caddr);
+    Wire.write(0x40);
+    Wire.write(pgm_buffer, 6);
+    Wire.endTransmission();
+    return 1;
+}
+
+void LCD_SSD1306::writeDigit(byte n, FONT_SIZE size)
+{
+    uint8_t twbrbackup = TWBR;
+    TWBR = 18; // upgrade to 400KHz!
+    if (size == FONT_SIZE_SMALL) {
+        byte pgm_buffer[6] = {0};
+        if (n >= 0 && n <= 9) {
+            memcpy_P(pgm_buffer, &font5x8[n + ('0' - ' ')], 5);
+        }
+        Wire.beginTransmission(_i2caddr);
+        Wire.write(0x40);
+        Wire.write(pgm_buffer, 6);
+        Wire.endTransmission();
+        m_col += 6;
+    } else if (size == FONT_SIZE_MEDIUM) {
+        byte pgm_buffer[8];
+        if (n >= 0 && n <= 9) {
+            memcpy_P(pgm_buffer, &digits8x8[n], 8);
+        } else {
+            memset(pgm_buffer, 0, 8);
+        }
+        Wire.beginTransmission(_i2caddr);
+        Wire.write(0x40);
+        Wire.write(pgm_buffer, 8);
+        Wire.endTransmission();
+        m_col += 8;
+    } else {
+        byte pgm_buffer[32];
+        if (n >= 0 && n <= 9) {
+            memcpy_P(pgm_buffer, &digits16x16[n], 32);
+        } else {
+            memset(pgm_buffer, 0, 16);
+        }
+
+        ssd1306_command(0xB0 + m_row);//set page address
+        ssd1306_command(m_col & 0xf);//set lower column address
+        ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+
+        Wire.beginTransmission(_i2caddr);
+        Wire.write(0x40);
+        Wire.write(pgm_buffer, 16);
+        Wire.endTransmission();
+
+        ssd1306_command(0xB0 + m_row + 1);//set page address
+        ssd1306_command(m_col & 0xf);//set lower column address
+        ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+
+        Wire.beginTransmission(_i2caddr);
+        Wire.write(0x40);
+        Wire.write(pgm_buffer + 16, 16);
+        Wire.endTransmission();
+
+        m_col += 16;
+    }
+    TWBR = twbrbackup;
 }

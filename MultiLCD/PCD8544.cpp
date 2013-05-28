@@ -166,11 +166,18 @@ void PCD8544::home()
 
 void PCD8544::setCursor(unsigned char column, unsigned char line)
 {
-    this->column = (column * 6 % this->width);
-    this->line = (line % (this->height/9 + 1));
+    if (column > width) {
+        column = 0;
+        line++;
+    }
+    if (line > height / 8)
+        line = 0;
 
-    this->send(PCD8544_CMD, 0x80 | this->column);
-    this->send(PCD8544_CMD, 0x40 | this->line);
+    this->column = column;
+    this->line = line;
+
+    this->send(PCD8544_CMD, 0x80 | column);
+    this->send(PCD8544_CMD, 0x40 | line);
 }
 
 
@@ -238,6 +245,30 @@ size_t PCD8544::write(uint8_t chr)
 #endif
 }
 
+void PCD8544::draw8x8(const unsigned char *data)
+{
+    // Output one column at a time...
+    for (unsigned char i = 0; i < 8; i++) {
+        this->send(PCD8544_DATA, data[i]);
+    }
+    this->setCursor(column + 8, line);
+}
+
+void PCD8544::draw16x16(const unsigned char *data)
+{
+    unsigned char scolumn = this->column;
+    unsigned char sline = this->line;
+    // Output one column at a time...
+    for (unsigned char i = 0; i < 16; i++) {
+        this->send(PCD8544_DATA, data[i]);
+    }
+    this->setCursor(scolumn, sline + 1);
+    for (unsigned char i = 0; i < 16; i++) {
+        this->send(PCD8544_DATA, data[i + 16]);
+    }
+    // Update the cursor position...
+    this->setCursor(scolumn + 16, sline);
+}
 
 void PCD8544::drawBitmap(const unsigned char *data, unsigned char columns, unsigned char lines)
 {
