@@ -21,23 +21,34 @@ To use a specific shield or module as the display for Arduino, you need to inclu
 
 And use one of following declarations before your code.
 
-For I2C OLED module:
+For SSD1306 OLED module:
 
-    LCD_OLED lcd;
-    
+    LCD_SSD1306 lcd;
+
 For LCD4884 shield or Nokia 5100 module:
-    
+
     LCD_PCD8544 lcd;
 
 For LCD1602 shield:
 
     LCD_1602 lcd;
 
-The library provides easy-to-use APIs for text display, including:
+For ZT I2C OLED module:
+
+    LCD_ZTOLED lcd;
+
+The library class inherits the Print class of Arduino, so that you can display texts on LCD with standard Arduino functions like this:
+
+    lcd.print("Hello, World!";)
+    lcd.print(foo, DEC);
+    lcd.print(bar, HEX);
+    lcd.print(1.23)         // gives "1.23" 
+    lcd.print(1.23456, 2);  // gives "1.23" 
+
+Besides, it provides unified APIs for initializing and controlling the LCD, as well as some convenient operations.
 
     void begin(); /* initializing */
     void clear(); /* clear screen */
     void setCursor(unsigned char column, unsigned char line); /* set current cursor */
-    void print(const char* s); /* display a string at current cursor*/
-    void printLarge(const char* s) /* display a string in large font */
-
+    void printInt(unsigned int n, FONT_SIZE size); /* display a integer number with desired size of font*/
+    void printLong(unsigned long n, FONT_SIZE size); /* display a long number with desired size of font*/
