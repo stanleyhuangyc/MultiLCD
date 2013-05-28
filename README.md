@@ -54,6 +54,31 @@ Besides, it provides unified APIs for initializing and controlling the LCD, as w
     void printInt(unsigned int n, FONT_SIZE size); /* display a integer number with desired size of font*/
     void printLong(unsigned long n, FONT_SIZE size); /* display a long number with desired size of font*/
 
+The code using the library can be extremely simple.
+
+    #include <Wire.h>
+    #include <MultiLCD.h>
+    
+    LCD_SSD1306 lcd; /* for SSD1306 OLED module */
+    
+    void setup()
+    {
+        lcd.begin();
+    	lcd.clear();
+    
+    	lcd.setCursor(0, 0);
+    	lcd.print("Hello, world!");
+    
+    	lcd.setCursor(0, 1);
+    	lcd.printLong(1234567890, FONT_SIZE_SMALL);
+    
+    	lcd.setCursor(0, 2);
+    	lcd.printLong(1234567890, FONT_SIZE_MEDIUM);
+    
+    	lcd.setCursor(0, 3);
+    	lcd.printLong(12345678, FONT_SIZE_LARGE);
+    }
+    
 MultiLCD working with various Arduino LCD/OLED:
 
 ![MultiLCD working with Arduino LCD/OLED](http://www.arduinodev.com/wp-content/uploads/2013/03/multilcd.jpg)
