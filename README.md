@@ -9,6 +9,7 @@ This library encapsulate several libraries for various Arduino LCD/LED display s
 * DFRobot LCD4884 shield
 * Nokia 3310/5100 LCD module
 * LCD1602 shield
+* SSD1306 OLED module
 * ZT I2C OLED module
 
 ![Arduino LCD shields](http://www.arduinodev.com/wp-content/uploads/2013/03/arduino_lcd_shields-300x195.jpg)
