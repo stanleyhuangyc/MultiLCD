@@ -53,3 +53,8 @@ Besides, it provides unified APIs for initializing and controlling the LCD, as w
     void setCursor(unsigned char column, unsigned char line); /* set current cursor */
     void printInt(unsigned int n, FONT_SIZE size); /* display a integer number with desired size of font*/
     void printLong(unsigned long n, FONT_SIZE size); /* display a long number with desired size of font*/
+
+MultiLCD working with various Arduino LCD/OLED:
+
+![MultiLCD working with Arduino LCD/OLED](http://www.arduinodev.com/wp-content/uploads/2013/03/multilcd.jpg)
+
