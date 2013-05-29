@@ -91,11 +91,6 @@ class PCD8544: public Print {
         void draw8x8(const unsigned char *data);
         void draw16x16(const unsigned char *data);
 
-        void changeLine()
-        {
-            column = 0;
-            line ++;
-        }
     protected:
         // Current cursor position...
         unsigned char column;

@@ -314,7 +314,7 @@ void LCD_SSD1306::writeDigit(byte n, FONT_SIZE size)
         if (n >= 0 && n <= 9) {
             memcpy_P(pgm_buffer, &digits16x16[n], 32);
         } else {
-            memset(pgm_buffer, 0, 16);
+            memset(pgm_buffer, 0, sizeof(pgm_buffer));
         }
 
         ssd1306_command(0xB0 + m_row);//set page address

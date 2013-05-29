@@ -8,11 +8,14 @@
 typedef enum {
     FONT_SIZE_SMALL = 0,
     FONT_SIZE_MEDIUM,
-    FONT_SIZE_LARGE
+    FONT_SIZE_LARGE,
+    FONT_SIZE_XLARGE
 } FONT_SIZE;
 
-extern const PROGMEM unsigned char font16x32[][32];
+
 extern const PROGMEM unsigned char font5x8[][5];
+extern const PROGMEM unsigned char digits8x8[][8] ;
+extern const PROGMEM unsigned char digits16x16[][32];
 
 #include "PCD8544.h"
 
@@ -43,6 +46,11 @@ public:
     {
         setCursor(0, line);
         for (byte i = 14; i > 0; i--) write(' ');
+    }
+    void changeLine()
+    {
+        column = 0;
+        line ++;
     }
     void printLarge(const char* s);
 private:
@@ -115,4 +123,28 @@ private:
     void writeDigit(byte n, FONT_SIZE size);
     byte m_col;
     byte m_row;
+};
+
+class LCD_ILI9325D : public LCD_Common, public Print
+{
+public:
+    void setCursor(byte column, byte line)
+    {
+        m_y = column * 6;
+        m_x = line * 16;
+    }
+    void setColor(uint16_t color)
+    {
+        m_color = color;
+    }
+    void begin();
+    void clear();
+    size_t write(uint8_t);
+    byte getLines() { return 53; }
+    byte getCols() { return 30; }
+private:
+    void writeDigit(byte n, FONT_SIZE size);
+    int m_x;
+    int m_y;
+    uint16_t m_color;
 };
