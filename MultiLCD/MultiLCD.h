@@ -26,6 +26,7 @@ public:
     virtual byte getLines() = 0;
     virtual byte getCols() = 0;
     virtual void changeLine() {}
+    virtual void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height) {}
     void printInt(unsigned int value, FONT_SIZE size, byte padding = 0);
     void printLong(unsigned long value, FONT_SIZE size, byte padding = 0);
 protected:
@@ -112,11 +113,12 @@ class LCD_SSD1306 : public LCD_Common, public SSD1306, public Print
 {
 public:
     void setCursor(byte column, byte line);
+    void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height);
+    size_t write(uint8_t c);
     void clear()
     {
         fill(0);
     }
-    size_t write(uint8_t c);
     byte getLines() { return 21; }
     byte getCols() { return 8; }
 private:
