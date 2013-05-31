@@ -27,8 +27,8 @@ public:
     virtual byte getCols() = 0;
     virtual void changeLine() {}
     virtual void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height) {}
-    void printInt(unsigned int value, FONT_SIZE size, byte padding = 0);
-    void printLong(unsigned long value, FONT_SIZE size, byte padding = 0);
+    void printInt(unsigned int value, FONT_SIZE size, char padding = -1);
+    void printLong(unsigned long value, FONT_SIZE size, char padding = -1);
 protected:
     virtual void writeDigit(byte n, FONT_SIZE size) {}
 };
@@ -115,10 +115,7 @@ public:
     void setCursor(byte column, byte line);
     void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height);
     size_t write(uint8_t c);
-    void clear()
-    {
-        fill(0);
-    }
+    void clear(byte x = 0, byte y = 0, byte width = 128, byte height = 64);
     byte getLines() { return 21; }
     byte getCols() { return 8; }
 private:
@@ -140,13 +137,15 @@ public:
         m_color = color;
     }
     void begin();
-    void clear();
+    void clear(uint8_t x = 0, uint8_t y = 0, uint16_t width = 320, uint16_t height = 240);
     size_t write(uint8_t);
     byte getLines() { return 53; }
     byte getCols() { return 30; }
 private:
     void writeDigit(byte n, FONT_SIZE size);
+    void SetXY(unsigned int x0,unsigned int x1,unsigned int y0,unsigned int y1);
     int m_x;
     int m_y;
     uint16_t m_color;
+    uint8_t rendermap[150];
 };

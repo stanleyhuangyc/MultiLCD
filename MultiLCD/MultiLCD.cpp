@@ -135,38 +135,36 @@ const PROGMEM unsigned char font5x8[][5] = {
   { 0x00, 0x00, 0x00, 0x00, 0x00 }   // 7f
 };
 
-void LCD_Common::printInt(unsigned int value, FONT_SIZE size, byte padding)
+void LCD_Common::printInt(unsigned int value, FONT_SIZE size, char padding)
 {
-    bool start = false;
-    for (unsigned int den = 10000; den; den /= 10) {
+    unsigned int den = 10000;
+    for (byte i = 5; i > 0; i--, den /= 10) {
         byte v = (byte)(value / den);
         value -= v * den;
-        if (v == 0 && !start) {
-            if (padding) {
+        if (v == 0 && padding) {
+            if (padding >= i) {
                 writeDigit(-1, size);
-                padding--;
             }
             continue;
         }
-        start = true;
+        padding = 0;
         writeDigit(v, size);
     }
 }
 
-void LCD_Common::printLong(unsigned long value, FONT_SIZE size, byte padding)
+void LCD_Common::printLong(unsigned long value, FONT_SIZE size, char padding)
 {
-    bool start = false;
-    for (unsigned long den = 1000000000; den; den /= 10) {
+    unsigned long den = 1000000000;
+    for (byte i = 10; i > 0; i--, den /= 10) {
         byte v = (byte)(value / den);
         value -= v * den;
-        if (v == 0 && !start) {
-            if (padding) {
+        if (v == 0 && padding) {
+            if (padding >= i) {
                 writeDigit(-1, size);
-                padding--;
             }
             continue;
         }
-        start = true;
+        padding = 0;
         writeDigit(v, size);
     }
 }
@@ -342,7 +340,6 @@ void LCD_SSD1306::writeDigit(byte n, FONT_SIZE size)
 
 void LCD_SSD1306::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height)
 {
-
     ssd1306_command(SSD1306_SETLOWCOLUMN | 0x0);  // low col = 0
     ssd1306_command(SSD1306_SETHIGHCOLUMN | 0x0);  // hi col = 0
     ssd1306_command(SSD1306_SETSTARTLINE | 0x0); // line #0
@@ -366,6 +363,37 @@ void LCD_SSD1306::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, b
             Wire.write(0x40);
             for (byte k = 0; k < width; k++, p++) {
                 Wire.write(pgm_read_byte_near(p));
+            }
+            Wire.endTransmission();
+        }
+    }
+    TWBR = twbrbackup;
+}
+
+void LCD_SSD1306::clear(byte x, byte y, byte width, byte height)
+{
+    ssd1306_command(SSD1306_SETLOWCOLUMN | 0x0);  // low col = 0
+    ssd1306_command(SSD1306_SETHIGHCOLUMN | 0x0);  // hi col = 0
+    ssd1306_command(SSD1306_SETSTARTLINE | 0x0); // line #0
+
+    // save I2C bitrate
+    uint8_t twbrbackup = TWBR;
+    TWBR = 18; // upgrade to 400KHz!
+
+    height >>= 3;
+    width >>= 3;
+    y >>= 3;
+    for (byte i = 0; i < height; i++) {
+      // send a bunch of data in one xmission
+        ssd1306_command(0xB0 + i + y);//set page address
+        ssd1306_command(x & 0xf);//set lower column address
+        ssd1306_command(0x10 | (x >> 4));//set higher column address
+
+        for(byte j = 0; j < 8; j++){
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (byte k = 0; k < width; k++) {
+                Wire.write(0);
             }
             Wire.endTransmission();
         }
