@@ -53,6 +53,7 @@ Besides, it provides unified APIs for initializing and controlling the LCD, as w
     void setCursor(unsigned char column, unsigned char line); /* set current cursor */
     void printInt(unsigned int n, FONT_SIZE size); /* display a integer number with desired size of font*/
     void printLong(unsigned long n, FONT_SIZE size); /* display a long number with desired size of font*/
+    void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height); /* draw monochrome bitmap */
 
 The code using the library can be extremely simple.
 
@@ -78,8 +79,14 @@ The code using the library can be extremely simple.
     	lcd.setCursor(0, 3);
     	lcd.printLong(12345678, FONT_SIZE_LARGE);
     }
-    
+
+
 MultiLCD working with various Arduino LCD/OLED:
 
 ![MultiLCD working with Arduino LCD/OLED](http://www.arduinodev.com/wp-content/uploads/2013/03/multilcd.jpg)
+
+
+Drawing bitmap on SSD1306:
+
+![Drawing bitmap on SSD1306 OLED](http://www.arduinodev.com/wp-content/uploads/2013/05/oled_smile-300x247.jpg)
 
