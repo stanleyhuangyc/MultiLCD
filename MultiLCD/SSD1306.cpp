@@ -110,8 +110,29 @@ void SSD1306::begin(uint8_t vccstate, uint8_t i2caddr) {
   #endif
 
   ssd1306_command(SSD1306_DISPLAYON);//--turn on oled panel
-  /*
-  */
+
+  // clear screen
+    delay(5);
+
+    ssd1306_command(SSD1306_SETLOWCOLUMN | 0x0);  // low col = 0
+    ssd1306_command(SSD1306_SETHIGHCOLUMN | 0x0);  // hi col = 0
+    ssd1306_command(SSD1306_SETSTARTLINE | 0x0); // line #0
+
+    for (byte i = 0; i < SSD1306_LCDHEIGHT / 8; i++) {
+      // send a bunch of data in one xmission
+        ssd1306_command(0xB0 + i);//set page address
+        ssd1306_command(0);//set lower column address
+        ssd1306_command(0x10);//set higher column address
+
+        for(byte j = 0; j < 8; j++){
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (byte k = 0; k < SSD1306_LCDWIDTH / 8; k++) {
+                Wire.write(0);
+            }
+            Wire.endTransmission();
+        }
+    }
 }
 
 
