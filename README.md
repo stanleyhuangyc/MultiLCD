@@ -14,7 +14,7 @@ This library encapsulate several libraries for various Arduino LCD/LED display s
 
 ![Arduino LCD shields](http://www.arduinodev.com/wp-content/uploads/2013/03/arduino_lcd_shields-300x195.jpg)
 
-The library includes fonts data for ASCII characters (5x7) and digits (8x8, 16x16). By using the library, it is extremely simple for display texts and numbers on desired position on a LCD screen, while very little change is needed to switch from one LCD module to another.
+The library embeds font data for ASCII characters (5x7 and 8x16) and digits (8x8, 16x16, 16x24). It is extremely simple for display texts and numbers on desired position on a LCD screen with the library, while very little change in code is needed to switch from one LCD module to another.
 
 To use a specific shield or module as the display for Arduino, you need to include library header at the beginning of the sketch.
 
@@ -50,11 +50,11 @@ Besides, it provides unified APIs for initializing and controlling the LCD, as w
 
     void begin(); /* initializing */
     void clear(); /* clear screen */
-    void setCursor(unsigned char column, unsigned char line); /* set current cursor */
-    void setFont(FONT_SIZE size)； /* set font size */
+    void setCursor(uint16_t column, uint8_t line); /* set current cursor, column is in pixel */
+    void setFont(FONT_SIZE size); /* set font size */
     void printInt(unsigned int n); /* display a integer number */
     void printLong(unsigned long n); /* display a long number */
-    void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height); /* draw monochrome bitmap */
+    void draw(const PROGMEM uint8_t* buffer, uint16_t x, uint16_t y, uint16_t width, uint16_t height); /* draw monochrome bitmap */
 
 The code using the library can be extremely simple.
 
