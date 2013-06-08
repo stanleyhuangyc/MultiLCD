@@ -116,7 +116,7 @@ class ZtLib
     int ScI2cMxDeactivateScroll(uint8_t);
     int ScI2cMxReset(uint8_t);
     int ScI2cMxSetLocation(uint8_t, uint8_t, uint8_t);
-    void ScI2cMxDisplayDot8x8(uint8_t, unsigned char *);
+    void ScI2cMxDisplayDot(uint8_t, const PROGMEM uint8_t* buffer, uint8_t len);
     void ScI2cMxDisplayDot16x16(uint8_t, uint8_t, uint8_t, unsigned char *);
     void ScI2cMxDisplayArea(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, const char *);
 };

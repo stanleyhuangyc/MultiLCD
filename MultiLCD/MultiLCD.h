@@ -30,6 +30,7 @@ public:
     virtual byte getCols() = 0;
     virtual void changeLine() {}
     virtual void clearLine(byte line) {}
+    void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height) {}
     void printInt(uint16_t value, char padding = -1);
     void printLong(unsigned long value, char padding = -1);
 protected:
@@ -78,7 +79,7 @@ public:
         m_page += 2;
     }
     size_t write(uint8_t c);
-    void print(const char* s);
+    //void print(const char* s);
     void writeDigit(byte n);
     void clear();
     void begin();

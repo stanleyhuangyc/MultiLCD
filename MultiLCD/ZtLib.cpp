@@ -8,10 +8,8 @@
   Version:V1.1
 */
 
+#include <Arduino.h>
 extern "C" {
-  #include <stdlib.h>
-  #include <string.h>
-  #include <inttypes.h>
   #include "../Wire/utility/twi.h"
 }
 
@@ -540,14 +538,10 @@ void ZtLib::ScI2cMxDisplayDot16x16(uint8_t addr, uint8_t page, uint8_t column, u
     twi_writeTo(addr, buff, 17, 1, 1);
 }
 
-void ZtLib::ScI2cMxDisplayDot8x8(uint8_t addr, unsigned char *str)
+void ZtLib::ScI2cMxDisplayDot(uint8_t addr, const PROGMEM uint8_t* buffer, uint8_t len)
 {
-    uint8_t buff[9];
-    buff[0] = REG_DAT;
-    for (int i=0; i<8; i++)
-    {
-       buff[i+1] = str[i];
-    }
+    uint8_t buff[9] = {REG_DAT};
+    memcpy_P(buff + 1, buffer, len);
     twi_writeTo(addr, buff, 9, 1, 1);
 }
 

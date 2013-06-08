@@ -45,23 +45,35 @@ void LCD_Common::printLong(unsigned long value, char padding)
 
 void LCD_ZTOLED::setCursor(byte column, byte line)
 {
-    m_column = column << 3;
-    m_page = line << 1;
-    delay(1);
+    m_column = column;
+    m_page = line;
     ScI2cMxSetLocation(OLED_ADDRESS, m_page, m_column);
+    delay(1);
 }
 
 size_t LCD_ZTOLED::write(uint8_t c)
 {
-    char s[2] = {c};
-    ScI2cMxDisplay8x16Str(OLED_ADDRESS, m_page, m_column, s);
-    m_column += 8;
-    if (m_column >= 128) {
-        m_column = 0;
-        m_page += 2;
+    if (m_font == FONT_SIZE_SMALL) {
+        if (c <= 0x20 || c >= 0x7f) {
+            ScI2cMxFillArea(OLED_ADDRESS, m_column, m_column + 5, m_page, m_page, 0);
+        } else {
+            setCursor(m_column, m_page);
+            ScI2cMxDisplayDot(OLED_ADDRESS, font5x8[c - 0x21], 5);
+        }
+        m_column += 6;
+    } else {
+        char s[2] = {c};
+        ScI2cMxDisplay8x16Str(OLED_ADDRESS, m_page, m_column, s);
+        m_column += 8;
+        if (m_column >= 128) {
+            m_column = 0;
+            m_page += 2;
+        }
     }
+    return 1;
 }
 
+/*
 void LCD_ZTOLED::print(const char* s)
 {
     ScI2cMxDisplay8x16Str(OLED_ADDRESS, m_page, m_column, s);
@@ -69,20 +81,21 @@ void LCD_ZTOLED::print(const char* s)
     m_page += (m_column >> 7) << 1;
     m_column %= 0x7f;
 }
+*/
 
 void LCD_ZTOLED::writeDigit(byte n)
 {
+    if (n > 9) return;
+
     if (m_font == FONT_SIZE_SMALL) {
-        unsigned char data[8];
-        if (n >= 0 && n <= 9) {
-            memcpy_P(data, digits8x8[n], 8);
-        } else {
-            memset(data, 0, sizeof(data));
-        }
-        ScI2cMxDisplayDot8x8(OLED_ADDRESS, data);
-        m_column += 8;
+        setCursor(m_column, m_page);
+        ScI2cMxDisplayDot(OLED_ADDRESS, font5x8[n + ('0' - 0x21)], 5);
+        m_column += 6;
     } else if (m_font == FONT_SIZE_MEDIUM) {
-        write(n >= 0 && n <= 9 ? '0' + n : ' ');
+        ScI2cMxDisplayDot(OLED_ADDRESS, digits8x8[n], 8);
+        m_column += 8;
+    } else if (m_font == FONT_SIZE_LARGE) {
+        write('0' + n);
     } else {
         unsigned char data[32];
         if (n >= 0 && n <= 9) {
@@ -173,31 +186,53 @@ size_t LCD_SSD1306::write(uint8_t c)
         Wire.endTransmission();
         m_col += 8;
     } else {
-        if (c <= 0x20 || c >= 0x7f) return 0;
-        c -= 0x21;
+        if (c > 0x20 && c < 0x7f) {
+            c -= 0x21;
 
-        ssd1306_command(0xB0 + m_row);//set page address
-        ssd1306_command(m_col & 0xf);//set lower column address
-        ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+            ssd1306_command(0xB0 + m_row);//set page address
+            ssd1306_command(m_col & 0xf);//set lower column address
+            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
 
-        Wire.beginTransmission(_i2caddr);
-        Wire.write(0x40);
-        for (byte i = 0; i <= 14; i += 2) {
-            Wire.write(pgm_read_byte_near(&font8x16_terminal[c][i]));
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (byte i = 0; i <= 14; i += 2) {
+                Wire.write(pgm_read_byte_near(&font8x16_terminal[c][i]));
+            }
+            Wire.endTransmission();
+
+            ssd1306_command(0xB0 + m_row + 1);//set page address
+            ssd1306_command(m_col & 0xf);//set lower column address
+            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (byte i = 1; i <= 15; i += 2) {
+                Wire.write(pgm_read_byte_near(&font8x16_terminal[c][i]));
+            }
+            Wire.endTransmission();
+        } else {
+            ssd1306_command(0xB0 + m_row);//set page address
+            ssd1306_command(m_col & 0xf);//set lower column address
+            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (byte i = 0; i < 8; i ++) {
+                Wire.write(0);
+            }
+            Wire.endTransmission();
+
+            ssd1306_command(0xB0 + m_row + 1);//set page address
+            ssd1306_command(m_col & 0xf);//set lower column address
+            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (byte i = 0; i < 8; i ++) {
+                Wire.write(0);
+            }
+            Wire.endTransmission();
         }
-        Wire.endTransmission();
-
-        ssd1306_command(0xB0 + m_row + 1);//set page address
-        ssd1306_command(m_col & 0xf);//set lower column address
-        ssd1306_command(0x10 | (m_col >> 4));//set higher column address
-
-        Wire.beginTransmission(_i2caddr);
-        Wire.write(0x40);
-        for (byte i = 1; i <= 15; i += 2) {
-            Wire.write(pgm_read_byte_near(&font8x16_terminal[c][i]));
-        }
-        Wire.endTransmission();
-
         m_col += 9;
     }
     return 1;
