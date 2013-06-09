@@ -31,11 +31,11 @@ void setup()
 
 void loop()
 {
-    lcd.clear();
-    lcd.draw(smile, 40, 8, 48, 48);
-    delay(2000);
+	lcd.clear();
+	lcd.draw(smile, 40, 8, 48, 48);
+	delay(1000);
 
-    lcd.clear();
+	lcd.clear();
 	lcd.setCursor(0, 0);
 	lcd.setFont(FONT_SIZE_SMALL);
 	lcd.print("Hello, world!");
@@ -60,5 +60,5 @@ void loop()
 	lcd.setFont(FONT_SIZE_XLARGE);
 	lcd.printLong(12345678);
 
-    delay(3000);
+	delay(3000);
 }
