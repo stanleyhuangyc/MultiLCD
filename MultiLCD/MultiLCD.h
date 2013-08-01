@@ -13,6 +13,9 @@ typedef enum {
 } FONT_SIZE;
 
 #define FLAG_PAD_ZERO 1
+#define FLAG_PIXEL_DOUBLE_H 2
+#define FLAG_PIXEL_DOUBLE_V 4
+#define FLAG_PIXEL_DOUBLE (FLAG_PIXEL_DOUBLE_H | FLAG_PIXEL_DOUBLE_V)
 
 extern const PROGMEM unsigned char font5x8[][5];
 extern const PROGMEM unsigned char digits8x8[][8] ;
@@ -29,7 +32,7 @@ public:
     void setFont(FONT_SIZE size) { m_font = size; }
     void setFlags(byte flags) { m_flags = flags; }
     virtual void backlight(bool on) {}
-    void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height) {}
+    virtual void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height) {}
     void printInt(uint16_t value, char padding = -1);
     void printLong(unsigned long value, char padding = -1);
 protected:
