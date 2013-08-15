@@ -191,7 +191,9 @@ size_t LCD_SSD1306::write(uint8_t c)
         m_col = 0;
         return 1;
     }
+#ifndef MEMORY_SAVING
     if (m_font == FONT_SIZE_SMALL) {
+#endif
         Wire.beginTransmission(_i2caddr);
         Wire.write(0x40);
         if (c > 0x20 && c < 0x7f) {
@@ -213,6 +215,7 @@ size_t LCD_SSD1306::write(uint8_t c)
             m_col = 0;
             m_row ++;
         }
+#ifndef MEMORY_SAVING
     } else {
         if (c > 0x20 && c < 0x7f) {
             c -= 0x21;
@@ -271,6 +274,7 @@ size_t LCD_SSD1306::write(uint8_t c)
             m_row += 2;
         }
     }
+#endif
     return 1;
 }
 
@@ -295,6 +299,7 @@ void LCD_SSD1306::writeDigit(byte n)
         Wire.endTransmission();
         m_col += 6;
     } else if (m_font == FONT_SIZE_MEDIUM) {
+#ifndef MEMORY_SAVING
         if (n <= 9) {
             n += '0' - 0x21;
             ssd1306_command(0xB0 + m_row);//set page address
@@ -346,6 +351,21 @@ void LCD_SSD1306::writeDigit(byte n)
             Wire.endTransmission();
         }
         m_col += (m_flags & FLAG_PIXEL_DOUBLE_H) ? 17 : 9;
+#else
+        Wire.beginTransmission(_i2caddr);
+        Wire.write(0x40);
+        if (n <= 9) {
+            for (byte i = 0; i < 8; i++) {
+                Wire.write(pgm_read_byte_near(&digits8x8[n][i]));
+            }
+        } else {
+            for (byte i = 0; i < 8; i++) {
+                Wire.write(0);
+            }
+        }
+        Wire.endTransmission();
+        m_col += 8;
+#endif
     } else if (m_font == FONT_SIZE_LARGE) {
         if (n <= 9) {
             byte i;
