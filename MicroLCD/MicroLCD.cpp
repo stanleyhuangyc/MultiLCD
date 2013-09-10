@@ -307,7 +307,7 @@ size_t LCD_SSD1306::write(uint8_t c)
         if (c > 0x20 && c < 0x7f) {
             c -= 0x21;
             for (byte i = 0; i < 5; i++) {
-                byte d = pgm_read_byte_near(&font5x8[c][i]);
+                byte d = pgm_read_byte(&font5x8[c][i]);
                 Wire.write(d);
                 if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
             }
@@ -335,7 +335,7 @@ size_t LCD_SSD1306::write(uint8_t c)
             Wire.beginTransmission(_i2caddr);
             Wire.write(0x40);
             for (byte i = 0; i <= 14; i += 2) {
-                byte d = pgm_read_byte_near(&font8x16_terminal[c][i]);
+                byte d = pgm_read_byte(&font8x16_terminal[c][i]);
                 Wire.write(d);
                 if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
             }
@@ -348,7 +348,7 @@ size_t LCD_SSD1306::write(uint8_t c)
             Wire.beginTransmission(_i2caddr);
             Wire.write(0x40);
             for (byte i = 1; i <= 15; i += 2) {
-                byte d = pgm_read_byte_near(&font8x16_terminal[c][i]);
+                byte d = pgm_read_byte(&font8x16_terminal[c][i]);
                 Wire.write(d);
                 if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
             }
@@ -396,7 +396,7 @@ void LCD_SSD1306::writeDigit(byte n)
         if (n <= 9) {
             n += '0' - 0x21;
             for (byte i = 0; i < 5; i++) {
-                Wire.write(pgm_read_byte_near(&font5x8[n][i]));
+                Wire.write(pgm_read_byte(&font5x8[n][i]));
             }
             Wire.write(0);
         } else {
@@ -406,8 +406,84 @@ void LCD_SSD1306::writeDigit(byte n)
         }
         Wire.endTransmission();
         m_col += 6;
-    } else if (m_font == FONT_SIZE_MEDIUM) {
+    } else if (m_font == FONT_SIZE_XLARGE) {
+        if (n <= 9) {
+            byte i;
+            ssd1306_command(0xB0 + m_row);//set page address
+            ssd1306_command(m_col & 0xf);//set lower column address
+            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (i = 0; i < 16; i ++) {
+                byte d = pgm_read_byte(&digits16x24[n][i * 3]);
+                Wire.write(d);
+                if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
+            }
+            Wire.endTransmission();
+
+            ssd1306_command(0xB0 + m_row + 1);//set page address
+            ssd1306_command(m_col & 0xf);//set lower column address
+            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (i = 0; i < 16; i ++) {
+                byte d = pgm_read_byte(&digits16x24[n][i * 3 + 1]);
+                Wire.write(d);
+                if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
+            }
+            Wire.endTransmission();
+
+            ssd1306_command(0xB0 + m_row + 2);//set page address
+            ssd1306_command(m_col & 0xf);//set lower column address
+            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (i = 0; i < 16; i ++) {
+                byte d = pgm_read_byte(&digits16x24[n][i * 3 + 2]);
+                Wire.write(d);
+                if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
+            }
+            Wire.endTransmission();
+        } else {
+            ssd1306_command(0xB0 + m_row);//set page address
+            ssd1306_command(m_col & 0xf);//set lower column address
+            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 32 : 16; i > 0; i--) {
+                Wire.write(0);
+            }
+            Wire.endTransmission();
+
+            ssd1306_command(0xB0 + m_row + 1);//set page address
+            ssd1306_command(m_col & 0xf);//set lower column address
+            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 32 : 16; i > 0; i--) {
+                Wire.write(0);
+            }
+            Wire.endTransmission();
+
+            ssd1306_command(0xB0 + m_row + 2);//set page address
+            ssd1306_command(m_col & 0xf);//set lower column address
+            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
+
+            Wire.beginTransmission(_i2caddr);
+            Wire.write(0x40);
+            for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 32 : 16; i > 0; i--) {
+                Wire.write(0);
+            }
+            Wire.endTransmission();
+        }
+        m_col += (m_flags & FLAG_PIXEL_DOUBLE_H) ? 30 : 16;
 #ifndef MEMORY_SAVING
+    } else if (m_font == FONT_SIZE_MEDIUM) {
         if (n <= 9) {
             n += '0' - 0x21;
             ssd1306_command(0xB0 + m_row);//set page address
@@ -417,7 +493,7 @@ void LCD_SSD1306::writeDigit(byte n)
             Wire.beginTransmission(_i2caddr);
             Wire.write(0x40);
             for (byte i = 0; i <= 14; i += 2) {
-                byte d = pgm_read_byte_near(&font8x16_terminal[n][i]);
+                byte d = pgm_read_byte(&font8x16_terminal[n][i]);
                 Wire.write(d);
                 if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
             }
@@ -430,7 +506,7 @@ void LCD_SSD1306::writeDigit(byte n)
             Wire.beginTransmission(_i2caddr);
             Wire.write(0x40);
             for (byte i = 1; i <= 15; i += 2) {
-                byte d = pgm_read_byte_near(&font8x16_terminal[n][i]);
+                byte d = pgm_read_byte(&font8x16_terminal[n][i]);
                 Wire.write(d);
                 if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
             }
@@ -459,22 +535,7 @@ void LCD_SSD1306::writeDigit(byte n)
             Wire.endTransmission();
         }
         m_col += (m_flags & FLAG_PIXEL_DOUBLE_H) ? 17 : 9;
-#else
-        Wire.beginTransmission(_i2caddr);
-        Wire.write(0x40);
-        if (n <= 9) {
-            for (byte i = 0; i < 8; i++) {
-                Wire.write(pgm_read_byte_near(&digits8x8[n][i]));
-            }
-        } else {
-            for (byte i = 0; i < 8; i++) {
-                Wire.write(0);
-            }
-        }
-        Wire.endTransmission();
-        m_col += 8;
-#endif
-    } else if (m_font == FONT_SIZE_LARGE) {
+    } else {
         if (n <= 9) {
             byte i;
             ssd1306_command(0xB0 + m_row);//set page address
@@ -484,7 +545,7 @@ void LCD_SSD1306::writeDigit(byte n)
             Wire.beginTransmission(_i2caddr);
             Wire.write(0x40);
             for (i = 0; i < 16; i ++) {
-                byte d = pgm_read_byte_near(&digits16x16[n][i]);
+                byte d = pgm_read_byte(&digits16x16[n][i]);
                 Wire.write(d);
                 if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
             }
@@ -497,7 +558,7 @@ void LCD_SSD1306::writeDigit(byte n)
             Wire.beginTransmission(_i2caddr);
             Wire.write(0x40);
             for (; i < 32; i ++) {
-                byte d = pgm_read_byte_near(&digits16x16[n][i]);
+                byte d = pgm_read_byte(&digits16x16[n][i]);
                 Wire.write(d);
                 if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
             }
@@ -526,82 +587,22 @@ void LCD_SSD1306::writeDigit(byte n)
             Wire.endTransmission();
         }
         m_col += (m_flags & FLAG_PIXEL_DOUBLE_H) ? 30 : 16;
-    } else if (m_font == FONT_SIZE_XLARGE) {
+#else
+    } else {
+        Wire.beginTransmission(_i2caddr);
+        Wire.write(0x40);
         if (n <= 9) {
-            byte i;
-            ssd1306_command(0xB0 + m_row);//set page address
-            ssd1306_command(m_col & 0xf);//set lower column address
-            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
-
-            Wire.beginTransmission(_i2caddr);
-            Wire.write(0x40);
-            for (i = 0; i < 16; i ++) {
-                byte d = pgm_read_byte_near(&digits16x24[n][i * 3]);
-                Wire.write(d);
-                if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
+            for (byte i = 0; i < 8; i++) {
+                Wire.write(pgm_read_byte(&digits8x8[n][i]));
             }
-            Wire.endTransmission();
-
-            ssd1306_command(0xB0 + m_row + 1);//set page address
-            ssd1306_command(m_col & 0xf);//set lower column address
-            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
-
-            Wire.beginTransmission(_i2caddr);
-            Wire.write(0x40);
-            for (i = 0; i < 16; i ++) {
-                byte d = pgm_read_byte_near(&digits16x24[n][i * 3 + 1]);
-                Wire.write(d);
-                if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
-            }
-            Wire.endTransmission();
-
-            ssd1306_command(0xB0 + m_row + 2);//set page address
-            ssd1306_command(m_col & 0xf);//set lower column address
-            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
-
-            Wire.beginTransmission(_i2caddr);
-            Wire.write(0x40);
-            for (i = 0; i < 16; i ++) {
-                byte d = pgm_read_byte_near(&digits16x24[n][i * 3 + 2]);
-                Wire.write(d);
-                if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
-            }
-            Wire.endTransmission();
         } else {
-            ssd1306_command(0xB0 + m_row);//set page address
-            ssd1306_command(m_col & 0xf);//set lower column address
-            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
-
-            Wire.beginTransmission(_i2caddr);
-            Wire.write(0x40);
-            for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 32 : 16; i > 0; i--) {
+            for (byte i = 0; i < 8; i++) {
                 Wire.write(0);
             }
-            Wire.endTransmission();
-
-            ssd1306_command(0xB0 + m_row + 1);//set page address
-            ssd1306_command(m_col & 0xf);//set lower column address
-            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
-
-            Wire.beginTransmission(_i2caddr);
-            Wire.write(0x40);
-            for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 32 : 16; i > 0; i--) {
-                Wire.write(0);
-            }
-            Wire.endTransmission();
-
-            ssd1306_command(0xB0 + m_row + 2);//set page address
-            ssd1306_command(m_col & 0xf);//set lower column address
-            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
-
-            Wire.beginTransmission(_i2caddr);
-            Wire.write(0x40);
-            for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 32 : 16; i > 0; i--) {
-                Wire.write(0);
-            }
-            Wire.endTransmission();
         }
-        m_col += (m_flags & FLAG_PIXEL_DOUBLE_H) ? 30 : 16;
+        Wire.endTransmission();
+        m_col += 8;
+#endif
     }
     TWBR = twbrbackup;
 }
@@ -630,7 +631,7 @@ void LCD_SSD1306::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, b
             Wire.beginTransmission(_i2caddr);
             Wire.write(0x40);
             for (byte k = 0; k < width; k++, p++) {
-                Wire.write(pgm_read_byte_near(p));
+                Wire.write(pgm_read_byte(p));
             }
             Wire.endTransmission();
         }
