@@ -299,73 +299,7 @@ void LCD_SSD1306::writeDigit(byte n)
         Wire.endTransmission();
         m_col += 6;
     } else if (m_font == FONT_SIZE_MEDIUM) {
-#ifndef MEMORY_SAVING
-        if (n <= 9) {
-            n += '0' - 0x21;
-            ssd1306_command(0xB0 + m_row);//set page address
-            ssd1306_command(m_col & 0xf);//set lower column address
-            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
-
-            Wire.beginTransmission(_i2caddr);
-            Wire.write(0x40);
-            for (byte i = 0; i <= 14; i += 2) {
-                byte d = pgm_read_byte(&font8x16_terminal[n][i]);
-                Wire.write(d);
-                if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
-            }
-            Wire.endTransmission();
-
-            ssd1306_command(0xB0 + m_row + 1);//set page address
-            ssd1306_command(m_col & 0xf);//set lower column address
-            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
-
-            Wire.beginTransmission(_i2caddr);
-            Wire.write(0x40);
-            for (byte i = 1; i <= 15; i += 2) {
-                byte d = pgm_read_byte(&font8x16_terminal[n][i]);
-                Wire.write(d);
-                if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
-            }
-            Wire.endTransmission();
-        } else {
-            ssd1306_command(0xB0 + m_row);//set page address
-            ssd1306_command(m_col & 0xf);//set lower column address
-            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
-
-            Wire.beginTransmission(_i2caddr);
-            Wire.write(0x40);
-            for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 16 : 8; i > 0; i--) {
-                Wire.write(0);
-            }
-            Wire.endTransmission();
-
-            ssd1306_command(0xB0 + m_row + 1);//set page address
-            ssd1306_command(m_col & 0xf);//set lower column address
-            ssd1306_command(0x10 | (m_col >> 4));//set higher column address
-
-            Wire.beginTransmission(_i2caddr);
-            Wire.write(0x40);
-            for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 16 : 8; i > 0; i--) {
-                Wire.write(0);
-            }
-            Wire.endTransmission();
-        }
-        m_col += (m_flags & FLAG_PIXEL_DOUBLE_H) ? 17 : 9;
-#else
-        Wire.beginTransmission(_i2caddr);
-        Wire.write(0x40);
-        if (n <= 9) {
-            for (byte i = 0; i < 8; i++) {
-                Wire.write(pgm_read_byte(&digits8x8[n][i]));
-            }
-        } else {
-            for (byte i = 0; i < 8; i++) {
-                Wire.write(0);
-            }
-        }
-        Wire.endTransmission();
-        m_col += 8;
-#endif
+        write(n <= 9 ? ('0' + n) : ' ');
     } else if (m_font == FONT_SIZE_LARGE) {
         if (n <= 9) {
             byte i;
