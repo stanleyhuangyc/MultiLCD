@@ -663,7 +663,7 @@
 		<Unit filename="SSD1306.h" />
 		<Unit filename="ZtLib.cpp" />
 		<Unit filename="ZtLib.h" />
-		<Unit filename="examples/lcdhello/lcdhello.ino">
+		<Unit filename="examples/tfthello/tfthello.ino">
 			<Option compile="1" />
 			<Option link="1" />
 		</Unit>
