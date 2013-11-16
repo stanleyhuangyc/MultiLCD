@@ -7,6 +7,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <SPI.h>
 #include <MultiLCD.h>
 
 LCD_ILI9341 lcd; /* for 2.2" SPI TFT module */
@@ -31,40 +32,40 @@ void loop()
 	lcd.backlight(false);
 
 	lcd.clear();
-    lcd.setTextColor(255, 255, 0);
+	lcd.setTextColor(255, 255, 0);
 	lcd.draw(smile, 0, 0, 48, 48);
 
-    lcd.setTextColor(255, 255, 255);
+	lcd.setTextColor(255, 255, 255);
 	lcd.setCursor(0, 10);
 	lcd.setFont(FONT_SIZE_SMALL);
 	lcd.print("Hello, world!");
 
-    lcd.setTextColor(255, 0, 255);
+	lcd.setTextColor(255, 0, 255);
 	lcd.setCursor(0, 11);
 	lcd.setFont(FONT_SIZE_MEDIUM);
 	lcd.print("Hello, world!");
 
-    lcd.setTextColor(255, 0, 0);
+	lcd.setTextColor(255, 0, 0);
 	lcd.setCursor(0, 13);
 	lcd.setFont(FONT_SIZE_SMALL);
 	lcd.printLong(1234567890);
 
-    lcd.setTextColor(0, 255, 0);
+	lcd.setTextColor(0, 255, 0);
 	lcd.setCursor(0, 14);
 	lcd.setFont(FONT_SIZE_MEDIUM);
 	lcd.printLong(1234567890);
 
-    lcd.setTextColor(0, 0, 255);
+	lcd.setTextColor(0, 0, 255);
 	lcd.setCursor(0, 16);
 	lcd.setFont(FONT_SIZE_LARGE);
 	lcd.printLong(12345678);
 
-    lcd.setTextColor(0, 255, 255);
+	lcd.setTextColor(0, 255, 255);
 	lcd.setCursor(0, 18);
 	lcd.setFont(FONT_SIZE_XLARGE);
 	lcd.printLong(12345678);
 
-    lcd.backlight(true);
+	lcd.backlight(true);
 
 	delay(10000);
 }
