@@ -7,10 +7,11 @@ For more information, please visit http://www.arduinodev.com
 This library encapsulate several libraries for various Arduino LCD/LED display shields or modules into a set of unified APIs. It supports these hardware:
 
 * DFRobot LCD4884 shield
-* Nokia 3310/5100 LCD module
+* Nokia 3310/5100 module
 * LCD1602 shield
-* SSD1306 OLED module
-* ZT I2C OLED module
+* SSD1306 based OLED module
+* ILI9341 based TFT LCD module (SPI)
+* ILI9325D based TFT LCD module (8-bit, MEGA only)
 
 ![Arduino LCD shields](http://www.arduinodev.com/wp-content/uploads/2013/03/arduino_lcd_shields-300x195.jpg)
 
