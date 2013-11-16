@@ -35,9 +35,9 @@ For LCD1602 shield:
 
     LCD_1602 lcd;
 
-For ZT I2C OLED module:
+For ILI9341 based TFT LCD module:
 
-    LCD_ZTOLED lcd;
+    LCD_ILI9341 lcd;
 
 The library class inherits the Print class of Arduino, so that you can display texts on LCD with standard Arduino functions like this:
 
