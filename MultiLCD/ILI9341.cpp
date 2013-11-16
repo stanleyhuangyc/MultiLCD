@@ -179,7 +179,7 @@ void LCD_ILI9341::begin (void)
 	WRITE_DATA(0x86);  	 //--
 
 	sendCMD(0x36);    	// Memory Access Control
-	WRITE_DATA(0x48);  	//C8	   //48 68绔栧睆//28 E8 妯睆
+	WRITE_DATA(0x48);  	//C8
 
 	sendCMD(0x3A);
 	WRITE_DATA(0x55);
@@ -257,12 +257,14 @@ uint8_t LCD_ILI9341::readID(void)
     }
     if(!ToF)                                                            /* data!=ID                     */
     {
+#if 0
         Serial.print("Read TFT ID failed, ID should be 0x09341, but read ID = 0x");
         for(i=0;i<3;i++)
         {
             Serial.print(data[i],HEX);
         }
         Serial.println();
+#endif
     }
     return ToF;
 }

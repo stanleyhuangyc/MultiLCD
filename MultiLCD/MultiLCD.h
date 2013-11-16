@@ -33,8 +33,8 @@ public:
     void setFlags(byte flags) { m_flags = flags; }
     virtual void backlight(bool on) {}
     virtual void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height) {}
-    void printInt(uint16_t value, char padding = -1);
-    void printLong(unsigned long value, char padding = -1);
+    void printInt(uint16_t value, int8_t padding = -1);
+    void printLong(uint32_t value, int8_t padding = -1);
 protected:
     virtual void writeDigit(byte n) {}
     byte m_font;
@@ -71,32 +71,6 @@ public:
     void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height);
 private:
     void writeDigit(byte n);
-};
-
-#include "ZtLib.h"
-
-#define OLED_ADDRESS 0x27
-
-class LCD_ZTOLED : public LCD_Common, public ZtLib, public Print
-{
-public:
-    byte getLines() { return 4; }
-    byte getCols() { return 16; }
-    void setCursor(byte column, byte line);
-    size_t write(uint8_t c);
-    //void print(const char* s);
-    void writeDigit(byte n);
-    void clear();
-    void begin();
-    void backlight(bool on) {}
-    void clearLine(byte line)
-    {
-        setCursor(0, line);
-        for (byte i = 16; i > 0; i--) write(' ');
-    }
-private:
-    unsigned char m_column;
-    unsigned char m_page;
 };
 
 #include "LCD4Bit_mod.h"
@@ -176,8 +150,8 @@ private:
     void Disable();
     void SetCommandMode();
     void SetDataMode();
-    int m_x;
-    int m_y;
+    uint16_t m_x;
+    uint16_t m_y;
     uint16_t m_color[2];
     byte lastData;
 };
@@ -228,6 +202,6 @@ private:
 	uint8_t Read_Register(uint8_t Addr,uint8_t xParameter);
 	uint8_t readID(void);
 	uint8_t m_color[2][2];
-    int m_x;
-    int m_y;
+    uint16_t m_x;
+    uint16_t m_y;
 };

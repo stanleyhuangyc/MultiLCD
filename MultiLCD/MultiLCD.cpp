@@ -9,10 +9,10 @@
 #include <Wire.h>
 #include "MultiLCD.h"
 
-void LCD_Common::printInt(unsigned int value, char padding)
+void LCD_Common::printInt(uint16_t value, int8_t padding)
 {
-    unsigned int den = 10000;
-    for (byte i = 5; i > 0; i--) {
+    uint16_t den = 10000;
+    for (int8_t i = 5; i > 0; i--) {
         byte v = (byte)(value / den);
         value -= v * den;
         den /= 10;
@@ -27,10 +27,10 @@ void LCD_Common::printInt(unsigned int value, char padding)
     }
 }
 
-void LCD_Common::printLong(unsigned long value, char padding)
+void LCD_Common::printLong(uint32_t value, int8_t padding)
 {
-    unsigned long den = 1000000000;
-    for (byte i = 10; i > 0; i--) {
+    uint32_t den = 1000000000;
+    for (int8_t i = 10; i > 0; i--) {
         byte v = (byte)(value / den);
         value -= v * den;
         den /= 10;
@@ -43,98 +43,6 @@ void LCD_Common::printLong(unsigned long value, char padding)
         padding = 0;
         writeDigit(v);
     }
-}
-
-void LCD_ZTOLED::setCursor(byte column, byte line)
-{
-    m_column = column;
-    m_page = line;
-    ScI2cMxSetLocation(OLED_ADDRESS, m_page, m_column);
-    delay(1);
-}
-
-size_t LCD_ZTOLED::write(uint8_t c)
-{
-    if (c == '\n') {
-        m_column = 0;
-        m_page += (m_font == FONT_SIZE_SMALL) ? 1 : 2;
-        return 0;
-    } else if (c == '\r') {
-        m_column = 0;
-        return 0;
-    }
-    if (m_font == FONT_SIZE_SMALL) {
-        if (c <= 0x20 || c >= 0x7f) {
-            ScI2cMxFillArea(OLED_ADDRESS, m_column, m_column + 5, m_page, m_page, 0);
-        } else {
-            ScI2cMxDisplayDot(OLED_ADDRESS, font5x8[c - 0x21], 5);
-        }
-        m_column += 6;
-        ScI2cMxSetLocation(OLED_ADDRESS, m_page, m_column);
-    } else {
-        char s[2] = {c};
-        ScI2cMxDisplay8x16Str(OLED_ADDRESS, m_page, m_column, s);
-        m_column += 8;
-        ScI2cMxSetLocation(OLED_ADDRESS, m_page, m_column);
-    }
-    return 1;
-}
-
-/*
-void LCD_ZTOLED::print(const char* s)
-{
-    ScI2cMxDisplay8x16Str(OLED_ADDRESS, m_page, m_column, s);
-    m_column += (strlen(s) << 3);
-    m_page += (m_column >> 7) << 1;
-    m_column %= 0x7f;
-}
-*/
-
-void LCD_ZTOLED::writeDigit(byte n)
-{
-    if (m_font == FONT_SIZE_SMALL) {
-        if (n <= 9)
-            ScI2cMxDisplayDot(OLED_ADDRESS, font5x8[n + ('0' - 0x21)], 5);
-        else
-            ScI2cMxFillArea(OLED_ADDRESS, m_column, m_column + 5, m_page, m_page, 0);
-        m_column += 6;
-        ScI2cMxSetLocation(OLED_ADDRESS, m_page, m_column);
-    } else if (m_font == FONT_SIZE_MEDIUM) {
-        if (n <= 9) {
-            ScI2cMxDisplayDot(OLED_ADDRESS, digits8x8[n], 8);
-        } else {
-            ScI2cMxFillArea(OLED_ADDRESS, m_column, m_column + 7, m_page, m_page, 0);
-
-        }
-        m_column += 8;
-        ScI2cMxSetLocation(OLED_ADDRESS, m_page, m_column);
-    } else if (m_font == FONT_SIZE_LARGE) {
-        write('0' + n);
-    } else {
-        unsigned char data[32];
-        if (n <= 9) {
-            memcpy_P(data, digits16x16[n], 32);
-        } else {
-            memset(data, 0, sizeof(data));
-        }
-        ScI2cMxDisplayDot16x16(OLED_ADDRESS, m_page, m_column, data);
-        m_column += 16;
-        ScI2cMxSetLocation(OLED_ADDRESS, m_page, m_column);
-    }
-}
-
-void LCD_ZTOLED::clear()
-{
-    ScI2cMxFillArea(OLED_ADDRESS, 0, 7, 0, 127, 0);
-    delay(10);
-    setCursor(0, 0);
-}
-
-void LCD_ZTOLED::begin()
-{
-    I2cInit();
-    ScI2cMxReset(OLED_ADDRESS);
-    clear();
 }
 
 void LCD_PCD8544::writeDigit(byte n)
@@ -280,8 +188,8 @@ size_t LCD_SSD1306::write(uint8_t c)
 
 void LCD_SSD1306::writeDigit(byte n)
 {
-    uint8_t twbrbackup = TWBR;
-    TWBR = 18; // upgrade to 400KHz!
+    //uint8_t twbrbackup = TWBR;
+    //TWBR = 18; // upgrade to 400KHz!
     if (m_font == FONT_SIZE_SMALL) {
         Wire.beginTransmission(_i2caddr);
         Wire.write(0x40);
@@ -429,7 +337,7 @@ void LCD_SSD1306::writeDigit(byte n)
         }
         m_col += (m_flags & FLAG_PIXEL_DOUBLE_H) ? 30 : 16;
     }
-    TWBR = twbrbackup;
+    //TWBR = twbrbackup;
 }
 
 void LCD_SSD1306::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height)
@@ -439,8 +347,8 @@ void LCD_SSD1306::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, b
     ssd1306_command(SSD1306_SETSTARTLINE | 0x0); // line #0
 
     // save I2C bitrate
-    uint8_t twbrbackup = TWBR;
-    TWBR = 18; // upgrade to 400KHz!
+    //uint8_t twbrbackup = TWBR;
+    //TWBR = 18; // upgrade to 400KHz!
 
     const PROGMEM byte *p = buffer;
     height >>= 3;
@@ -461,7 +369,7 @@ void LCD_SSD1306::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, b
             Wire.endTransmission();
         }
     }
-    TWBR = twbrbackup;
+    //TWBR = twbrbackup;
 }
 
 void LCD_SSD1306::clearLine(byte line)
@@ -471,8 +379,8 @@ void LCD_SSD1306::clearLine(byte line)
     ssd1306_command(SSD1306_SETSTARTLINE | 0x0); // line #0
 
     // save I2C bitrate
-    uint8_t twbrbackup = TWBR;
-    TWBR = 18; // upgrade to 400KHz!
+    //uint8_t twbrbackup = TWBR;
+    //TWBR = 18; // upgrade to 400KHz!
 
     // send a bunch of data in one xmission
     ssd1306_command(0xB0 + line);//set page address
@@ -488,7 +396,7 @@ void LCD_SSD1306::clearLine(byte line)
         Wire.endTransmission();
     }
 
-    TWBR = twbrbackup;
+    //TWBR = twbrbackup;
 }
 
 void LCD_SSD1306::clear(byte x, byte y, byte width, byte height)
@@ -498,8 +406,8 @@ void LCD_SSD1306::clear(byte x, byte y, byte width, byte height)
     ssd1306_command(SSD1306_SETSTARTLINE | 0x0); // line #0
 
     // save I2C bitrate
-    uint8_t twbrbackup = TWBR;
-    TWBR = 18; // upgrade to 400KHz!
+    //uint8_t twbrbackup = TWBR;
+    //TWBR = 18; // upgrade to 400KHz!
 
     height >>= 3;
     width >>= 3;
@@ -521,5 +429,5 @@ void LCD_SSD1306::clear(byte x, byte y, byte width, byte height)
     }
 
     setCursor(0, 0);
-    TWBR = twbrbackup;
+    //TWBR = twbrbackup;
 }
