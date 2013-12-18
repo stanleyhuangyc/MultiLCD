@@ -239,6 +239,8 @@ void LCD_ILI9341::begin (void)
 	sendCMD(0x29);    //Display on
 	sendCMD(0x2c);
 	clear();
+
+	backlight(true);
 }
 
 uint8_t LCD_ILI9341::readID(void)
@@ -394,7 +396,9 @@ size_t LCD_ILI9341::write(uint8_t c)
         return 0;
     }
 
+#ifndef MEMORY_SAVING
     if (m_font == FONT_SIZE_SMALL) {
+#endif
         setXY(m_x, m_x + 7, m_y, m_y + 4);
         m_y += 6;
         if (m_y >= 320) {
@@ -421,6 +425,7 @@ size_t LCD_ILI9341::write(uint8_t c)
         } else {
             clearPixels(5 * 8);
         }
+#ifndef MEMORY_SAVING
     } else {
         setXY(m_x, m_x + 15, m_y, m_y + 7);
         m_y += 9;
@@ -453,6 +458,7 @@ size_t LCD_ILI9341::write(uint8_t c)
             clearPixels(8 * 16);
         }
     }
+#endif
 }
 
 void LCD_ILI9341::writeDigit(byte n)
