@@ -241,6 +241,8 @@ void LCD_ILI9341::begin (void)
 	clear();
 
 	backlight(true);
+	setTextColor(0xffff);
+	SetBGColor(0);
 }
 
 uint8_t LCD_ILI9341::readID(void)
@@ -290,6 +292,7 @@ void LCD_ILI9341::clear(uint16_t XL, uint16_t XR, uint16_t YU, uint16_t YD, uint
     unsigned long  XY=0;
     unsigned long i=0;
 
+    backlight(false);
     if(XL > XR)
     {
         XL = XL^XR;
@@ -314,7 +317,6 @@ void LCD_ILI9341::clear(uint16_t XL, uint16_t XR, uint16_t YU, uint16_t YD, uint
     setPage(YU, YD);
     sendCMD(0x2c);                                                  /* start to write to display ra */
                                                                         /* m                            */
-
     TFT_DC_HIGH;
     TFT_CS_LOW;
 
@@ -327,6 +329,8 @@ void LCD_ILI9341::clear(uint16_t XL, uint16_t XR, uint16_t YU, uint16_t YD, uint
     }
 
     TFT_CS_HIGH;
+
+    backlight(true);
 }
 
 void LCD_ILI9341::clear(void)
