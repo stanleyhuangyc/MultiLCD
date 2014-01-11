@@ -653,16 +653,12 @@
 		</Compiler>
 		<Unit filename="ILI9325D.cpp" />
 		<Unit filename="ILI9341.cpp" />
-		<Unit filename="LCD4Bit_mod.cpp" />
-		<Unit filename="LCD4Bit_mod.h" />
 		<Unit filename="MultiLCD.cpp" />
 		<Unit filename="MultiLCD.h" />
 		<Unit filename="PCD8544.cpp" />
 		<Unit filename="PCD8544.h" />
 		<Unit filename="SSD1306.cpp" />
 		<Unit filename="SSD1306.h" />
-		<Unit filename="ZtLib.cpp" />
-		<Unit filename="ZtLib.h" />
 		<Unit filename="examples/lcdhello/lcdhello.ino">
 			<Option compile="1" />
 			<Option link="1" />
@@ -671,6 +667,7 @@
 		<Extensions>
 			<code_completion />
 			<debugger />
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

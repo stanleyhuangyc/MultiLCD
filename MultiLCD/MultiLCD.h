@@ -6,7 +6,7 @@
 *************************************************************************/
 
 #if !defined(__AVR_ATmega2560__) && !defined(__AVR_ATmega1280__) && !defined(__AVR_ATmega644P__) && !defined(__SAM3X8E__)
-//#define MEMORY_SAVING
+#define MEMORY_SAVING
 #endif
 
 typedef enum {
@@ -22,11 +22,18 @@ typedef enum {
 #define FLAG_PIXEL_DOUBLE (FLAG_PIXEL_DOUBLE_H | FLAG_PIXEL_DOUBLE_V)
 
 #define RGB16(r,g,b) (((uint16_t)(r >> 3) << 11) | ((uint16_t)(g >> 2) << 5) | (b >> 2))
+
 #define RGB16_RED 0xF800
+
 #define RGB16_GREEN 0x7E0
+
 #define RGB16_BLUE 0x1F
 #define RGB16_YELLOW 0xFFE0
+
+#define RGB16_CYAN 0x7FF
+#define RGB16_PINK 0xF81F
 #define RGB16_WHITE 0xFFFF
+
 
 extern const PROGMEM unsigned char font5x8[][5];
 extern const PROGMEM unsigned char digits8x8[][8] ;
@@ -34,6 +41,7 @@ extern const PROGMEM unsigned char digits16x16[][32];
 extern const PROGMEM unsigned char digits16x24[][48];
 extern const PROGMEM unsigned char font8x16_doslike[][16];
 extern const PROGMEM unsigned char font8x16_terminal[][16];
+
 #include "PCD8544.h"
 
 class LCD_Common
@@ -82,23 +90,6 @@ public:
     void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height);
 private:
     void writeDigit(byte n);
-};
-
-#include "LCD4Bit_mod.h"
-class LCD_1602 : public LCD_Common, public LCD4Bit_mod
-{
-public:
-    byte getLines() { return 2; }
-    byte getCols() { return 16; }
-    void writeDigit(byte n)
-    {
-        write(n >= 0 && n <= 9 ? '0' + n : ' ');
-    }
-    void clearLine(byte line)
-    {
-        setCursor(0, line);
-        for (byte i = 16; i > 0; i--) write(' ');
-    }
 };
 
 #include "SSD1306.h"
