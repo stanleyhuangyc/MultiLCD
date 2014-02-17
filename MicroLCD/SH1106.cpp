@@ -31,23 +31,34 @@ void LCD_SH1106::setCursor(unsigned char x, unsigned char y)
 
 void LCD_SH1106::clear(byte x, byte y, byte width, byte height)
 {
+    WriteCommand(SSD1306_SETLOWCOLUMN | 0x0);  // low col = 0
+    WriteCommand(SSD1306_SETHIGHCOLUMN | 0x0);  // hi col = 0
+    WriteCommand(SSD1306_SETSTARTLINE | 0x0); // line #0
+
+    // save I2C bitrate
     uint8_t twbrbackup = TWBR;
     TWBR = 18; // upgrade to 400KHz!
 
-    WriteCommand(0x02);    /*set lower column address*/
-    WriteCommand(0x10);    /*set higher column address*/
-    WriteCommand(0xB0);    /*set page address*/
-    for(y = 0;y<8;y++)
-    {
-       WriteCommand(0xB0+y);    /*set page address*/
-       WriteCommand(0x02);    /*set lower column address*/
-       WriteCommand(0x10);    /*set higher column address*/
-       for(x = 0;x<64;x++)
-         {
-          WriteData(0);
-          WriteData(0);
-         }
+    height >>= 3;
+    width >>= 3;
+    y >>= 3;
+    for (byte i = 0; i < height; i++) {
+      // send a bunch of data in one xmission
+        WriteCommand(0xB0 + i + y);//set page address
+        WriteCommand((x + 2) & 0xf);//set lower column address
+        WriteCommand(0x10 | (x >> 4));//set higher column address
+
+        for(byte j = 0; j < 8; j++){
+            Wire.beginTransmission(I2C_ADDR);
+            Wire.write(0x40);
+            for (byte k = 0; k < width; k++) {
+                Wire.write(0);
+            }
+            Wire.endTransmission();
+        }
     }
+
+    setCursor(0, 0);
     TWBR = twbrbackup;
 }
 
