@@ -9,7 +9,8 @@
 #include <Wire.h>
 #include <MicroLCD.h>
 
-LCD_SSD1306 lcd; /* for SSD1306 OLED module */
+LCD_SH1106 lcd; /* for SH1106 OLED module */
+//LCD_SSD1306 lcd; /* for SSD1306 OLED module */
 
 static const PROGMEM uint8_t smile[48 * 48 / 8] = {
 0x00,0x00,0x00,0x00,0x00,0x00,0x80,0xC0,0xE0,0xF0,0xF8,0xF8,0xFC,0xFC,0xFE,0xFE,0x7E,0x7F,0x7F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x7F,0x7F,0x7E,0xFE,0xFE,0xFC,0xFC,0xF8,0xF8,0xF0,0xE0,0xC0,0x80,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -34,39 +35,53 @@ void setup()
 void loop()
 {
 	lcd.draw(smile, 40, 8, 48, 48);
-	delay(1000);
 
-	lcd.clear();
-	lcd.setCursor(0, 0);
-	lcd.setFont(FONT_SIZE_SMALL);
-	lcd.print("Hello, world!");
-
-	lcd.setCursor(0, 2);
-	lcd.setFont(FONT_SIZE_MEDIUM);
-	lcd.print("Hello, world!");
+    delay(1000);
+    lcd.clear();
 
 	lcd.draw(tick, 40, 48, 16, 16);
 	lcd.draw(cross, 72, 48, 16, 16);
 
-        delay(3000);
-        lcd.clear();
+	delay(1000);
+	lcd.clear();
+
+	lcd.setCursor(0, 0);
+	lcd.setFont(FONT_SIZE_SMALL);
+	lcd.print("Hello, world!");
+
+	lcd.setCursor(0, 2);
+	lcd.setFont(FONT_SIZE_MEDIUM);
+	lcd.print("Hello, world!");
+
+
+    delay(1000);
+    lcd.clear();
 
 	lcd.setCursor(0, 0);
 	lcd.setFont(FONT_SIZE_SMALL);
 	lcd.printLong(12345678);
 
-	lcd.setCursor(56, 0);
+    delay(1000);
+    lcd.clear();
+
+	lcd.setCursor(0, 0);
 	lcd.setFont(FONT_SIZE_MEDIUM);
 	lcd.printLong(12345678);
 
-	lcd.setCursor(0, 2);
+    delay(1000);
+    lcd.clear();
+
+	lcd.setCursor(0, 0);
 	lcd.setFont(FONT_SIZE_LARGE);
 	lcd.printLong(12345678);
 
-	lcd.setCursor(0, 5);
+    delay(1000);
+    lcd.clear();
+
+	lcd.setCursor(0, 0);
 	lcd.setFont(FONT_SIZE_XLARGE);
 	lcd.printLong(12345678);
 
-	delay(3000);
+	delay(1000);
 	lcd.clear();
 }
