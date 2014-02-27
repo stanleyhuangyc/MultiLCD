@@ -6,7 +6,7 @@
 *************************************************************************/
 
 #if !defined(__AVR_ATmega2560__) && !defined(__AVR_ATmega1280__) && !defined(__AVR_ATmega644P__) && !defined(__SAM3X8E__)
-#define MEMORY_SAVING
+//#define MEMORY_SAVING
 #endif
 
 typedef enum {
@@ -24,12 +24,9 @@ typedef enum {
 #define RGB16(r,g,b) (((uint16_t)(r >> 3) << 11) | ((uint16_t)(g >> 2) << 5) | (b >> 2))
 
 #define RGB16_RED 0xF800
-
 #define RGB16_GREEN 0x7E0
-
 #define RGB16_BLUE 0x1F
 #define RGB16_YELLOW 0xFFE0
-
 #define RGB16_CYAN 0x7FF
 #define RGB16_PINK 0xF81F
 #define RGB16_WHITE 0xFFFF
