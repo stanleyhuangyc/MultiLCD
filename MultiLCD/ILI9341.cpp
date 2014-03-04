@@ -358,8 +358,8 @@ void LCD_ILI9341::clear(void)
 
 void LCD_ILI9341::setXY(uint16_t x0, uint16_t x1, uint16_t y0, uint16_t y1)
 {
-    setCol(x0, x1);
-    setPage(319 - y1, 319 - y0);
+    setCol(239 - x1, 239 - x0);
+    setPage(y0, y1);
     sendCMD(0x2c);
 }
 
@@ -382,10 +382,21 @@ void LCD_ILI9341::clearPixels(uint16_t pixels)
     {
         SPI.transfer(0);
         SPI.transfer(0);
-        SPI.transfer(0);
-        SPI.transfer(0);
     }
     TFT_CS_HIGH;
+}
+
+void LCD_ILI9341::sendPixelData(byte d)
+{
+    for (byte j = 0; j < 8; j++, d <<= 1) {
+        if (d & 0x80) {
+            SPI.transfer(m_color[1][1]);
+            SPI.transfer(m_color[1][0]);
+        } else {
+            SPI.transfer(m_color[0][1]);
+            SPI.transfer(m_color[0][0]);
+        }
+    }
 }
 
 size_t LCD_ILI9341::write(uint8_t c)
@@ -406,25 +417,18 @@ size_t LCD_ILI9341::write(uint8_t c)
         setXY(m_x, m_x + 7, m_y, m_y + 4);
         m_y += 6;
         if (m_y >= 320) {
-            m_x += (m_font + 1) << 3;
+            m_x += 8;
             m_y = 0;
-            if (m_x >= 240) {
-                m_x = 0;
-            }
+            if (m_x >= 240) m_x = 0;
         }
         if (c > 0x20 && c < 0x7f) {
             byte pgm_buffer[5];
             memcpy_P(pgm_buffer, &font5x8[c - 0x21], 5);
-            byte i = 4;
             TFT_DC_HIGH;
             TFT_CS_LOW;
-            do {
-                unsigned char d = pgm_buffer[i];
-                for (byte j = 0; j < 8; j++, d >>= 1) {
-                    SPI.transfer(m_color[d & 1][1]);
-                    SPI.transfer(m_color[d & 1][0]);
-                }
-            } while (i--);
+            for (byte i = 0; i < 5; i++) {
+                sendPixelData(pgm_buffer[i]);
+            }
             TFT_CS_HIGH;
         } else {
             clearPixels(5 * 8);
@@ -434,11 +438,9 @@ size_t LCD_ILI9341::write(uint8_t c)
         setXY(m_x, m_x + 15, m_y, m_y + 7);
         m_y += 9;
         if (m_y >= 320) {
-            m_x += (m_font + 1) << 3;
+            m_x += 16;
             m_y = 0;
-            if (m_x >= 240) {
-                m_x = 0;
-            }
+            if (m_x >= 240) m_x = 0;
         }
         if (c > 0x20 && c < 0x7f) {
             byte pgm_buffer[16];
@@ -446,16 +448,8 @@ size_t LCD_ILI9341::write(uint8_t c)
             TFT_DC_HIGH;
             TFT_CS_LOW;
             for (byte i = 0; i < 16; i += 2) {
-                unsigned char d = pgm_buffer[14 - i];
-                for (byte j = 0; j < 8; j++, d >>= 1) {
-                    SPI.transfer(m_color[d & 1][1]);
-                    SPI.transfer(m_color[d & 1][0]);
-                }
-                d = pgm_buffer[15 - i];
-                for (byte j = 0; j < 8; j++, d >>= 1) {
-                    SPI.transfer(m_color[d & 1][1]);
-                    SPI.transfer(m_color[d & 1][0]);
-                }
+                sendPixelData(pgm_buffer[i + 1]);
+                sendPixelData(pgm_buffer[i]);
             }
             TFT_CS_HIGH;
         } else {
@@ -467,30 +461,7 @@ size_t LCD_ILI9341::write(uint8_t c)
 
 void LCD_ILI9341::writeDigit(byte n)
 {
-    if (m_font == FONT_SIZE_SMALL) {
-        setXY(m_x, m_x + 7, m_y, m_y + 7);
-        sendCMD(0x2c);
-        if (n <= 9) {
-            byte pgm_buffer[8];
-            memcpy_P(pgm_buffer, &digits8x8[n], 8);
-            byte i = 7;
-            TFT_DC_HIGH;
-            TFT_CS_LOW;
-            do {
-                unsigned char d = pgm_buffer[i];
-                for (byte j = 0; j < 8; j++, d >>= 1) {
-                    SPI.transfer(m_color[d & 1][1]);
-                    SPI.transfer(m_color[d & 1][0]);
-                }
-            } while (i--);
-            TFT_CS_HIGH;
-            m_y += 8;
-        } else {
-            clearPixels(8 * 8);
-        }
-    } else if (m_font == FONT_SIZE_MEDIUM) {
-        write(n <= 9 ? ('0' + n) : ' ');
-    } else if (m_font == FONT_SIZE_LARGE) {
+    if (m_font == FONT_SIZE_LARGE) {
         setXY(m_x, m_x + 15, m_y, m_y + 15);
         m_y += 16;
         if (n <= 9) {
@@ -499,16 +470,8 @@ void LCD_ILI9341::writeDigit(byte n)
             TFT_DC_HIGH;
             TFT_CS_LOW;
             for (byte i = 0; i < 16; i++) {
-                unsigned char d = pgm_buffer[15 - i];
-                for (byte j = 0; j < 8; j++, d >>= 1) {
-                    SPI.transfer(m_color[d & 1][1]);
-                    SPI.transfer(m_color[d & 1][0]);
-                }
-                d = pgm_buffer[31 - i];
-                for (byte j = 0; j < 8; j++, d >>= 1) {
-                    SPI.transfer(m_color[d & 1][1]);
-                    SPI.transfer(m_color[d & 1][0]);
-                }
+                sendPixelData(pgm_buffer[16 + i]);
+                sendPixelData(pgm_buffer[i]);
             }
             TFT_CS_HIGH;
         } else {
@@ -523,26 +486,16 @@ void LCD_ILI9341::writeDigit(byte n)
             TFT_DC_HIGH;
             TFT_CS_LOW;
             for (int i = 0; i < 48; i += 3) {
-                unsigned char d = pgm_buffer[45 - i];
-                for (int j = 0; j < 8; j++, d >>= 1) {
-                    SPI.transfer(m_color[d & 1][1]);
-                    SPI.transfer(m_color[d & 1][0]);
-                }
-                d = pgm_buffer[46 - i];
-                for (int j = 0; j < 8; j++, d >>= 1) {
-                    SPI.transfer(m_color[d & 1][1]);
-                    SPI.transfer(m_color[d & 1][0]);
-                }
-                d = pgm_buffer[47 - i];
-                for (int j = 0; j < 8; j++, d >>= 1) {
-                    SPI.transfer(m_color[d & 1][1]);
-                    SPI.transfer(m_color[d & 1][0]);
-                }
+                sendPixelData(pgm_buffer[i + 2]);
+                sendPixelData(pgm_buffer[i + 1]);
+                sendPixelData(pgm_buffer[i]);
             }
             TFT_CS_HIGH;
         } else {
             clearPixels(16 * 24);
         }
+    } else {
+        write(n <= 9 ? ('0' + n) : ' ');
     }
 }
 
@@ -553,15 +506,12 @@ void LCD_ILI9341::draw(const PROGMEM byte* buffer, uint16_t x, uint16_t y, uint1
     uint16_t i = width - 1;
     TFT_DC_HIGH;
     TFT_CS_LOW;
-    do {
-        for (uint8_t h = 0; h < rows; h++) {
+    for (uint16_t i = 0; i < width; i++) {
+        for (int8_t h = rows - 1; h >= 0; h--) {
             byte d = pgm_read_byte(buffer + i + width * h);
-            for (byte j = 0; j < 8; j++, d >>= 1) {
-                SPI.transfer(m_color[d & 1][1]);
-                SPI.transfer(m_color[d & 1][0]);
-            }
+            sendPixelData(d);
         }
-    } while (i--);
+    }
     TFT_CS_HIGH;
 }
 
@@ -572,29 +522,24 @@ void LCD_ILI9341::draw2x(const PROGMEM byte* buffer, uint16_t x, uint16_t y, byt
     uint16_t i = width - 1;
     TFT_DC_HIGH;
     TFT_CS_LOW;
-    do {
-        for (uint8_t h = 0; h < rows; h++) {
-            byte d = pgm_read_byte(buffer + i + width * h);
-            for (byte j = 0; j < 8; j++, d >>= 1) {
-                byte h = m_color[d & 1][1];
-                byte l = m_color[d & 1][0];
-                SPI.transfer(h);
-                SPI.transfer(l);
-                SPI.transfer(h);
-                SPI.transfer(l);
+    uint16_t w = width << 1;
+    for (uint16_t i = 0; i < w; i++) {
+        for (int8_t h = rows - 1; h >= 0; h--) {
+            byte d = pgm_read_byte(buffer + (i >> 1) + width * h);
+            for (byte j = 0; j < 8; j++, d <<= 1) {
+                if (d & 0x80) {
+                    SPI.transfer(m_color[1][1]);
+                    SPI.transfer(m_color[1][0]);
+                    SPI.transfer(m_color[1][1]);
+                    SPI.transfer(m_color[1][0]);
+                } else {
+                    SPI.transfer(m_color[0][1]);
+                    SPI.transfer(m_color[0][0]);
+                    SPI.transfer(m_color[0][1]);
+                    SPI.transfer(m_color[0][0]);
+                }
             }
         }
-        for (uint8_t h = 0; h < rows; h++) {
-            byte d = pgm_read_byte(buffer + i + width * h);
-            for (byte j = 0; j < 8; j++, d >>= 1) {
-                byte h = m_color[d & 1][1];
-                byte l = m_color[d & 1][0];
-                SPI.transfer(h);
-                SPI.transfer(l);
-                SPI.transfer(h);
-                SPI.transfer(l);
-            }
-        }
-    } while (i--);
+    };
     TFT_CS_HIGH;
 }

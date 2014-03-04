@@ -208,6 +208,7 @@ public:
     void draw(const PROGMEM byte* buffer, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
     void draw2x(const PROGMEM byte* buffer, uint16_t x, uint16_t y, byte width, byte height);
 private:
+    void sendPixelData(byte d);
     void writeDigit(byte n);
     void clearPixels(uint16_t pixels);
     void setCol(uint16_t StartCol,uint16_t EndCol);
