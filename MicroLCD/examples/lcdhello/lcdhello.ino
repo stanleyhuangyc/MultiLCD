@@ -1,7 +1,7 @@
 /*************************************************************************
 * Demo sketch for MicroLCD library
 * Distributed under GPL v2.0
-* Copyright (c) 2013 Stanley Huang <stanleyhuangyc@live.com>
+* Copyright (c) 2013-14 Stanley Huang <stanleyhuangyc@live.com>
 * All rights reserved.
 *************************************************************************/
 
@@ -34,14 +34,13 @@ void setup()
 
 void loop()
 {
+	lcd.clear();
 	lcd.draw(smile, 40, 8, 48, 48);
+	delay(1000);
 
-    delay(1000);
-    lcd.clear();
-
+	lcd.clear();
 	lcd.draw(tick, 40, 48, 16, 16);
 	lcd.draw(cross, 72, 48, 16, 16);
-
 	delay(1000);
 	lcd.clear();
 
@@ -52,36 +51,30 @@ void loop()
 	lcd.setCursor(0, 2);
 	lcd.setFont(FONT_SIZE_MEDIUM);
 	lcd.print("Hello, world!");
+	delay(1000);
 
-
-    delay(1000);
-    lcd.clear();
-
+	lcd.clear();
 	lcd.setCursor(0, 0);
 	lcd.setFont(FONT_SIZE_SMALL);
 	lcd.printLong(12345678);
+	delay(1000);
 
-    delay(1000);
-    lcd.clear();
-
+	lcd.clear();
 	lcd.setCursor(0, 0);
 	lcd.setFont(FONT_SIZE_MEDIUM);
 	lcd.printLong(12345678);
+	delay(1000);
 
-    delay(1000);
-    lcd.clear();
-
+	lcd.clear();
 	lcd.setCursor(0, 0);
 	lcd.setFont(FONT_SIZE_LARGE);
 	lcd.printLong(12345678);
+	delay(1000);
 
-    delay(1000);
-    lcd.clear();
-
+	lcd.clear();
 	lcd.setCursor(0, 0);
 	lcd.setFont(FONT_SIZE_XLARGE);
 	lcd.printLong(12345678);
-
 	delay(1000);
-	lcd.clear();
 }
+
