@@ -4,6 +4,9 @@
 
 LCD_ILI9341 lcd; /* for 2.2" SPI TFT module */
 
+#define ANALOG_PIN A3
+#define BUTTON_PIN 8
+
 const PROGMEM uint8_t tick[16 *16 / 8] =
 {0x00,0x80,0xC0,0xE0,0xC0,0x80,0x00,0x80,0xC0,0xE0,0xF0,0xF8,0xFC,0x78,0x30,0x00,0x00,0x01,0x03,0x07,0x0F,0x1F,0x1F,0x1F,0x0F,0x07,0x03,0x01,0x00,0x00,0x00,0x00};
 
@@ -19,21 +22,30 @@ void setup() {
   lcd.print("Button:");
   lcd.setFont(FONT_SIZE_XLARGE);
   // set up pin mode
-  pinMode(A3, INPUT);
-  pinMode(8, INPUT);
+  pinMode(ANALOG_PIN, INPUT);
+  pinMode(BUTTON_PIN, INPUT);
   // set up serial port baudrate
   Serial.begin(115200);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  int value = analogRead(A3);
+  // display analog input value 
+  int value = analogRead(ANALOG_PIN);
+  lcd.setTextColor(RGB16_YELLOW);
   lcd.setCursor(0, 3);
   lcd.printInt(value, 4);
 
-  int btn = digitalRead(8);
-  lcd.draw(btn ? tick : cross, 160, 24, 16, 16);
-  if (!btn) digitalWrite(8, HIGH);
+  // draw tick (when button is pressed) or cross (when button is not pressed)
+  int btn = digitalRead(BUTTON_PIN);
+  if (!btn) {
+    lcd.setTextColor(RGB16_GREEN);
+    lcd.draw2x(tick, 160, 20, 16, 16);
+    // reset button state
+    digitalWrite(BUTTON_PIN, HIGH);
+  } else {
+    lcd.setTextColor(RGB16_RED);
+    lcd.draw2x(cross, 160, 20, 16, 16);
+  }
   
   // output analog value via serial UART
   Serial.println(value);
