@@ -27,8 +27,9 @@ void loop() {
 
   int btn = digitalRead(8);
   lcd.setCursor(160, 3);
-  lcd.print(btn ? "ON " : "OFF");
-
+  lcd.print(btn ? "UP  " : "DOWN");
+  if (!btn) digitalWrite(8, HIGH);
+  
   // output analog value via serial UART
   Serial.println(value);
   

@@ -49,7 +49,7 @@ void setup()
 
   // we'll use the initialization code from the utility libraries
   // since we're just testing if the card is working!
-  if (!card.init(SPI_HALF_SPEED, chipSelect)) {
+  if (!card.init(SPI_FULL_SPEED, chipSelect)) {
     lcd.setTextColor(RGB16_RED);
     lcd.println("\nInitialization failed. Things to check:");
     lcd.setTextColor(RGB16_WHITE);
