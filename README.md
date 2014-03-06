@@ -1,8 +1,9 @@
 MultiLCD Library for Arduino
 ============================
 
-A high performance display library for multiple models of Arduino display shields/modules
 Written by Stanley Huang, distributed under GPL.
+MultiLCD is a highly optimized library designed for displaying characters and bitmaps on multiple models of Arduino display shields/modules with easy-to-use and unified API. It is developed with performance in first priority. Though supported models are not as many as some widely used Arduino display libraries (e.g. UTFT), it renders faster with simpler API.
+
 For more information, please visit http://arduinodev.com
 
 This library supports following Arduino shields/modules:
