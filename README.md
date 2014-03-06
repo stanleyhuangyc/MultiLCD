@@ -11,7 +11,7 @@ This library supports following Arduino shields/modules:
 * Freematics 2.2" TFT LCD shield (16-bit color)
 * IteadStudio 2.8" TFT LCD shield (16-bit color)
 * ILI9341 based TFT LCD shields (SPI)
-* ILI9325D based TFT LCD shields (8-bit, MEGA only)
+* ILI9325D based TFT LCD shields
 * SSD1306 based OLED module (monochrome)
 * SH1106 based OLED module (monochrome)
 * Nokia 3310/5100 module (monochrome)
