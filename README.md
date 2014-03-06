@@ -1,19 +1,24 @@
 MultiLCD Library for Arduino
 ============================
 
+A high performance display library for multiple models of Arduino display shields/modules
 Written by Stanley Huang, distributed under GPL.
 For more information, please visit http://arduinodev.com
 
-This library encapsulate several libraries for various Arduino LCD/LED display shields or modules into a set of unified APIs. It supports these hardware:
+This library supports following Arduino shields/modules:
 
-* DFRobot LCD4884 shield
-* Nokia 3310/5100 module
-* LCD1602 shield
-* SSD1306 based OLED module
-* ILI9341 based TFT LCD module (SPI)
-* ILI9325D based TFT LCD module (8-bit, MEGA only)
+* Freematics 2.2" TFT LCD shield (16-bit color)
+* IteadStudio 2.8" TFT LCD shield (16-bit color)
+* ILI9341 based TFT LCD shields (SPI)
+* ILI9325D based TFT LCD shields (8-bit, MEGA only)
+* SSD1306 based OLED module (monochrome)
+* SH1106 based OLED module (monochrome)
+* Nokia 3310/5100 module (monochrome)
+* DFRobot LCD4884 shield (monochrome)
 
-![Arduino LCD shields](http://www.arduinodev.com/wp-content/uploads/2013/03/arduino_lcd_shields-300x195.jpg)
+To obtain any of above hardware, please visit: http://arduinodev.com/store/?route=product/category&path=17
+
+![Arduino LCD shields](http://arduinodev.com/wp-content/uploads/2013/03/arduino_lcd_shields-300x195.jpg)
 
 The library embeds font data for ASCII characters (5x7 and 8x16) and digits (8x8, 16x16, 16x24). It is extremely simple for display texts and numbers on desired position on a LCD screen with the library, while very little change in code is needed to switch from one LCD module to another.
 
@@ -31,9 +36,9 @@ For LCD4884 shield or Nokia 5100 module:
 
     LCD_PCD8544 lcd;
 
-For LCD1602 shield:
+For ILI9325D shield:
 
-    LCD_1602 lcd;
+    LCD_ILI9325D lcd;
 
 For ILI9341 based TFT LCD module:
 
@@ -111,12 +116,6 @@ The code using the library can be extremely simple.
 
         delay(3000);
     }
-
-
-
-MultiLCD working with various Arduino LCD/OLED:
-
-![MultiLCD working with Arduino LCD/OLED](http://www.arduinodev.com/wp-content/uploads/2013/03/multilcd.jpg)
 
 
 Drawing bitmap on SSD1306:
