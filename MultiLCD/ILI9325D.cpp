@@ -428,7 +428,7 @@ void LCD_ILI9325D::draw(const PROGMEM byte* buffer, uint16_t width, uint16_t hei
     m_x += width;
 }
 
-void LCD_ILI9325D::draw2x(const PROGMEM byte* buffer, uint16_t x, uint16_t y, byte width, byte height)
+void LCD_ILI9325D::draw2x(const PROGMEM byte* buffer, byte width, byte height)
 {
     char buf[240];
     uint16_t pixels = (uint16_t)width * height;
