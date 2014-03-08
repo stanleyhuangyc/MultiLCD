@@ -35,16 +35,15 @@ void setup()
 
 void loop()
 {
-	lcd.backlight(false);
-
 	lcd.clear();
 	lcd.setTextColor(255, 0, 255);
-	lcd.draw(smile, 0, 0, 48, 48);
+	lcd.draw(smile, 48, 48);
 
+    lcd.setCursor(100, 0);
     lcd.setTextColor(0, 255, 0);
-	lcd.draw2x(tick, 256, 0, 16, 16);
+	lcd.draw2x(tick, 16, 16);
 	lcd.setTextColor(255, 0, 0);
-	lcd.draw2x(cross, 288, 0, 16, 16);
+	lcd.draw2x(cross, 16, 16);
 
 	lcd.setTextColor(255, 255, 255);
 	lcd.setCursor(0, 10);
@@ -75,8 +74,6 @@ void loop()
 	lcd.setCursor(0, 18);
 	lcd.setFont(FONT_SIZE_XLARGE);
 	lcd.printLong(12345678);
-
-	lcd.backlight(true);
 
 	delay(10000);
 }

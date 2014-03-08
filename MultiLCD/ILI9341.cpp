@@ -402,11 +402,11 @@ void LCD_ILI9341::sendPixelData(byte d)
 size_t LCD_ILI9341::write(uint8_t c)
 {
     if (c == '\n') {
-        m_x += (m_font + 1) << 3;
+        m_y += (m_font + 1) << 3;
         return 0;
     } else if (c == '\r') {
-        setXY(m_x, m_x + 7, m_y, 319);
-        clearPixels((320 - m_y) * 8);
+        setXY(m_y, m_y + 7, m_x, 319);
+        clearPixels((320 - m_x) * 8);
         m_y = 0;
         return 0;
     }
@@ -414,12 +414,12 @@ size_t LCD_ILI9341::write(uint8_t c)
 #ifndef MEMORY_SAVING
     if (m_font == FONT_SIZE_SMALL) {
 #endif
-        setXY(m_x, m_x + 7, m_y, m_y + 4);
-        m_y += 6;
-        if (m_y >= 320) {
-            m_x += 8;
-            m_y = 0;
-            if (m_x >= 240) m_x = 0;
+        setXY(m_y, m_y + 7, m_x, m_x + 4);
+        m_x += 6;
+        if (m_x >= 320) {
+            m_y += 8;
+            m_x = 0;
+            if (m_y >= 240) m_y = 0;
         }
         if (c > 0x20 && c < 0x7f) {
             byte pgm_buffer[5];
@@ -435,12 +435,12 @@ size_t LCD_ILI9341::write(uint8_t c)
         }
 #ifndef MEMORY_SAVING
     } else {
-        setXY(m_x, m_x + 15, m_y, m_y + 7);
-        m_y += 9;
-        if (m_y >= 320) {
-            m_x += 16;
-            m_y = 0;
-            if (m_x >= 240) m_x = 0;
+        setXY(m_y, m_y + 15, m_x, m_x + 7);
+        m_x += 9;
+        if (m_x >= 320) {
+            m_y += 16;
+            m_x = 0;
+            if (m_y >= 240) m_y = 0;
         }
         if (c > 0x20 && c < 0x7f) {
             byte pgm_buffer[16];
@@ -462,8 +462,8 @@ size_t LCD_ILI9341::write(uint8_t c)
 void LCD_ILI9341::writeDigit(byte n)
 {
     if (m_font == FONT_SIZE_LARGE) {
-        setXY(m_x, m_x + 15, m_y, m_y + 15);
-        m_y += 16;
+        setXY(m_y, m_y + 15, m_x, m_x + 15);
+        m_x += 16;
         if (n <= 9) {
             byte pgm_buffer[32];
             memcpy_P(pgm_buffer, &digits16x16[n], sizeof(pgm_buffer));
@@ -478,8 +478,8 @@ void LCD_ILI9341::writeDigit(byte n)
             clearPixels(16 * 16);
         }
     } else if (m_font == FONT_SIZE_XLARGE) {
-        setXY(m_x, m_x + 23, m_y, m_y + 15);
-        m_y += 18;
+        setXY(m_y, m_y + 23, m_x, m_x + 15);
+        m_x += 17;
         if (n <= 9) {
             byte pgm_buffer[48];
             memcpy_P(pgm_buffer, &digits16x24[n], sizeof(pgm_buffer));
@@ -499,10 +499,10 @@ void LCD_ILI9341::writeDigit(byte n)
     }
 }
 
-void LCD_ILI9341::draw(const PROGMEM byte* buffer, uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+void LCD_ILI9341::draw(const PROGMEM byte* buffer, uint16_t width, uint16_t height)
 {
     byte rows = height >> 3;
-    setXY(y, y + height - 1, x, x + width - 1);
+    setXY(m_y, m_y + height - 1, m_x, m_x + width - 1);
     uint16_t i = width - 1;
     TFT_DC_HIGH;
     TFT_CS_LOW;
@@ -513,16 +513,17 @@ void LCD_ILI9341::draw(const PROGMEM byte* buffer, uint16_t x, uint16_t y, uint1
         }
     }
     TFT_CS_HIGH;
+    m_x += width;
 }
 
-void LCD_ILI9341::draw2x(const PROGMEM byte* buffer, uint16_t x, uint16_t y, byte width, byte height)
+void LCD_ILI9341::draw2x(const PROGMEM byte* buffer, byte width, byte height)
 {
     byte rows = height >> 3;
-    setXY(y, y + height * 2 - 1, x, x + width * 2 - 1);
+    setXY(m_y, m_y + height * 2 - 1, m_x, m_x + width * 2 - 1);
     uint16_t i = width - 1;
+    uint16_t w = width << 1;
     TFT_DC_HIGH;
     TFT_CS_LOW;
-    uint16_t w = width << 1;
     for (uint16_t i = 0; i < w; i++) {
         for (int8_t h = rows - 1; h >= 0; h--) {
             byte d = pgm_read_byte(buffer + (i >> 1) + width * h);
@@ -542,4 +543,5 @@ void LCD_ILI9341::draw2x(const PROGMEM byte* buffer, uint16_t x, uint16_t y, byt
         }
     };
     TFT_CS_HIGH;
+    m_x += (width << 1);
 }
