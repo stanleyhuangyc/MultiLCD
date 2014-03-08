@@ -319,7 +319,7 @@ void LCD_SH1106::writeDigit(byte n)
     TWBR = twbrbackup;
 }
 
-void LCD_SH1106::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height)
+void LCD_SH1106::draw(const PROGMEM byte* buffer, byte width, byte height)
 {
     uint8_t twbrbackup = TWBR;
     TWBR = 18; // upgrade to 400KHz!
@@ -331,12 +331,11 @@ void LCD_SH1106::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, by
     const PROGMEM byte *p = buffer;
     height >>= 3;
     width >>= 3;
-    y >>= 3;
     for (byte i = 0; i < height; i++) {
       // send a bunch of data in one xmission
-        WriteCommand(0xB0 + i + y);//set page address
-        WriteCommand(x & 0xf);//set lower column address
-        WriteCommand(0x10 | (x >> 4));//set higher column address
+        WriteCommand(0xB0 + i + m_row);//set page address
+        WriteCommand(m_col & 0xf);//set lower column address
+        WriteCommand(0x10 | (m_col >> 4));//set higher column address
 
         for(byte j = 0; j < 8; j++){
             Wire.beginTransmission(I2C_ADDR);
@@ -348,6 +347,7 @@ void LCD_SH1106::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, by
         }
     }
     TWBR = twbrbackup;
+    m_col += width;
 }
 
 void LCD_SH1106::begin()
@@ -396,4 +396,6 @@ void LCD_SH1106::begin()
   WriteCommand(0x40);
 
   WriteCommand(0xAF);    /*display ON*/
+
+  clear();
 }

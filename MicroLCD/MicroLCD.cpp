@@ -245,10 +245,10 @@ const PROGMEM unsigned char font8x16_terminal[][16] = {
 };
 #endif
 
-void LCD_Common::printInt(unsigned int value, char padding)
+void LCD_Common::printInt(uint16_t value, int8_t padding)
 {
-    unsigned int den = 10000;
-    for (byte i = 5; i > 0; i--) {
+    uint16_t den = 10000;
+    for (int8_t i = 5; i > 0; i--) {
         byte v = (byte)(value / den);
         value -= v * den;
         den /= 10;
@@ -263,10 +263,10 @@ void LCD_Common::printInt(unsigned int value, char padding)
     }
 }
 
-void LCD_Common::printLong(unsigned long value, char padding)
+void LCD_Common::printLong(uint32_t value, int8_t padding)
 {
-    unsigned long den = 1000000000;
-    for (byte i = 10; i > 0; i--) {
+    uint32_t den = 1000000000;
+    for (int8_t i = 10; i > 0; i--) {
         byte v = (byte)(value / den);
         value -= v * den;
         den /= 10;
@@ -545,7 +545,7 @@ void LCD_SSD1306::writeDigit(byte n)
     TWBR = twbrbackup;
 }
 
-void LCD_SSD1306::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height)
+void LCD_SSD1306::draw(const PROGMEM byte* buffer, byte width, byte height)
 {
     ssd1306_command(SSD1306_SETLOWCOLUMN | 0x0);  // low col = 0
     ssd1306_command(SSD1306_SETHIGHCOLUMN | 0x0);  // hi col = 0
@@ -558,12 +558,11 @@ void LCD_SSD1306::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, b
     const PROGMEM byte *p = buffer;
     height >>= 3;
     width >>= 3;
-    y >>= 3;
     for (byte i = 0; i < height; i++) {
       // send a bunch of data in one xmission
-        ssd1306_command(0xB0 + i + y);//set page address
-        ssd1306_command(x & 0xf);//set lower column address
-        ssd1306_command(0x10 | (x >> 4));//set higher column address
+        ssd1306_command(0xB0 + i + m_row);//set page address
+        ssd1306_command(m_col & 0xf);//set lower column address
+        ssd1306_command(0x10 | (m_col >> 4));//set higher column address
 
         for(byte j = 0; j < 8; j++){
             Wire.beginTransmission(_i2caddr);
@@ -575,6 +574,7 @@ void LCD_SSD1306::draw(const PROGMEM byte* buffer, byte x, byte y, byte width, b
         }
     }
     TWBR = twbrbackup;
+    m_col += width;
 }
 
 void LCD_SSD1306::clearLine(byte line)

@@ -35,9 +35,9 @@ public:
     void setFont(FONT_SIZE size) { m_font = size; }
     void setFlags(byte flags) { m_flags = flags; }
     virtual void backlight(bool on) {}
-    virtual void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height) {}
-    void printInt(uint16_t value, char padding = -1);
-    void printLong(unsigned long value, char padding = -1);
+    virtual void draw(const PROGMEM byte* buffer, byte width, byte height) {}
+    void printInt(uint16_t value, int8_t padding = -1);
+    void printLong(uint32_t value, int8_t padding = -1);
 protected:
     virtual void writeDigit(byte n) {}
     byte m_font;
@@ -62,7 +62,7 @@ class LCD_SSD1306 : public LCD_Common, public SSD1306, public Print
 {
 public:
     void setCursor(byte column, byte line);
-    void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height);
+    void draw(const PROGMEM byte* buffer, byte width, byte height);
     size_t write(uint8_t c);
     void clear(byte x = 0, byte y = 0, byte width = 128, byte height = 64);
     void clearLine(byte line);
@@ -79,7 +79,7 @@ class LCD_SH1106 : public LCD_Common, public Print
 public:
     void begin();
     void setCursor(byte column, byte line);
-    void draw(const PROGMEM byte* buffer, byte x, byte y, byte width, byte height);
+    void draw(const PROGMEM byte* buffer, byte width, byte height);
     size_t write(uint8_t c);
     void clear(byte x = 0, byte y = 0, byte width = 128, byte height = 64);
     void clearLine(byte line);
