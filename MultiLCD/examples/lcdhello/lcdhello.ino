@@ -1,7 +1,7 @@
 /*************************************************************************
-* Demo sketch of Arduino Text Display Library for Multiple LCDs
+* Demo sketch for monochrome displays
 * Distributed under GPL v2.0
-* Copyright (c) 2013 Stanley Huang <stanleyhuangyc@live.com>
+* Copyright (c) 2013-14 Stanley Huang <stanleyhuangyc@live.com>
 * All rights reserved.
 *************************************************************************/
 
@@ -10,11 +10,11 @@
 #include <SPI.h>
 #include <MultiLCD.h>
 
+LCD_SH1106 lcd; /* for SH1106 OLED module */
 //LCD_SSD1306 lcd; /* for SSD1306 OLED module */
 //LCD_PCD8544 lcd; /* for LCD4884 shield or Nokia 5100 screen module */
-//LCD_1602 lcd; /* for LCD1602 shield */
 //LCD_ILI9325D lcd; /* for Itead 2.8" TFT LCD shield */
-LCD_ILI9341 lcd; /* for Freematics 2.2" TFT LCD shield */
+//LCD_ILI9341 lcd; /* for Freematics 2.2" TFT LCD shield */
 
 static const PROGMEM uint8_t smile[48 * 48 / 8] = {
 0x00,0x00,0x00,0x00,0x00,0x00,0x80,0xC0,0xE0,0xF0,0xF8,0xF8,0xFC,0xFC,0xFE,0xFE,0x7E,0x7F,0x7F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x7F,0x7F,0x7E,0xFE,0xFE,0xFC,0xFC,0xF8,0xF8,0xF0,0xE0,0xC0,0x80,0x00,0x00,0x00,0x00,0x00,0x00,
