@@ -13,8 +13,8 @@
 //LCD_SSD1306 lcd; /* for SSD1306 OLED module */
 //LCD_PCD8544 lcd; /* for LCD4884 shield or Nokia 5100 screen module */
 //LCD_1602 lcd; /* for LCD1602 shield */
-//LCD_ILI9325D lcd; /* for Itead 2.8" TFT shield */
-LCD_ILI9341 lcd;
+//LCD_ILI9325D lcd; /* for Itead 2.8" TFT LCD shield */
+LCD_ILI9341 lcd; /* for Freematics 2.2" TFT LCD shield */
 
 static const PROGMEM uint8_t smile[48 * 48 / 8] = {
 0x00,0x00,0x00,0x00,0x00,0x00,0x80,0xC0,0xE0,0xF0,0xF8,0xF8,0xFC,0xFC,0xFE,0xFE,0x7E,0x7F,0x7F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x7F,0x7F,0x7E,0xFE,0xFE,0xFC,0xFC,0xF8,0xF8,0xF0,0xE0,0xC0,0x80,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -33,26 +33,31 @@ static const PROGMEM uint8_t cross[16 * 16 / 8] =
 
 void setup()
 {
-    delay(1000);
 	lcd.begin();
 }
 
 void loop()
 {
-	lcd.draw(smile, 40, 0, 48, 48);
-	lcd.draw(tick, 40, 48, 16, 16);
-	lcd.draw(cross, 72, 48, 16, 16);
+	lcd.clear();
+
+	// draw bitmap of 48x48 pixels
+	lcd.setCursor(40, 0);
+	lcd.draw(smile, 48, 48);
+	// draw bitmap of 16x16 pixels
+	lcd.setCursor(0, 6);
+	lcd.draw(tick, 16, 16);
+	lcd.draw(cross, 16, 16);
 	delay(1000);
 
+	// display string
 	lcd.clear();
-	lcd.setCursor(0, 0);
 	lcd.setFont(FONT_SIZE_SMALL);
-	lcd.print("Hello, world!");
+	lcd.println("Hello, world!");
 
-	lcd.setCursor(0, 1);
 	lcd.setFont(FONT_SIZE_MEDIUM);
-	lcd.print("Hello, world!");
+	lcd.println("Hello, world!");
 
+	// display numbers
 	lcd.setCursor(0, 3);
 	lcd.setFont(FONT_SIZE_SMALL);
 	lcd.printLong(12345678);
@@ -70,5 +75,4 @@ void loop()
 	lcd.printLong(12345678);
 
 	delay(3000);
-	lcd.clear();
 }
