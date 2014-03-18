@@ -84,8 +84,8 @@ void LCD_ILI9325D::WriteData(byte l, byte h)
         lastData = h;
     }
 
-	digitalWrite(WR,LOW);//LCD_WR=0;
-	digitalWrite(WR,HIGH);//LCD_WR=1;
+    digitalWrite(WR,LOW);//LCD_WR=0;
+    digitalWrite(WR,HIGH);//LCD_WR=1;
 
     if (l != lastData) {
         PORTE = (l & 0x3) | ((l & 0xC) << 2) | ((l & 0x20) >> 2);
@@ -94,8 +94,8 @@ void LCD_ILI9325D::WriteData(byte l, byte h)
         lastData = l;
     }
 
-	digitalWrite(WR,LOW);//LCD_WR=0;
-	digitalWrite(WR,HIGH);//LCD_WR=1;
+    digitalWrite(WR,LOW);//LCD_WR=0;
+    digitalWrite(WR,HIGH);//LCD_WR=1;
 }
 
 void LCD_ILI9325D::WriteData(uint16_t c)
@@ -262,8 +262,8 @@ void LCD_ILI9325D::clearPixels(uint16_t pixels)
 
 void LCD_ILI9325D::clear(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
-	unsigned long count = (unsigned long)width * height;
-	setXY(y, y + height - 1, x, x + width - 1);
+    unsigned long count = (unsigned long)width * height;
+    setXY(y, y + height - 1, x, x + width - 1);
 
     digitalWrite(RS,HIGH);//LCD_RS=0;
     digitalWrite(CS,LOW);//LCD_CS =0;
@@ -278,8 +278,8 @@ void LCD_ILI9325D::clear(uint16_t x, uint16_t y, uint16_t width, uint16_t height
         digitalWrite(WR,HIGH);//LCD_WR=1;
     } while (--count);
     digitalWrite(CS,HIGH);//LCD_CS =0;
-	m_x = x;
-	m_y = y;
+    m_x = x;
+    m_y = y;
 }
 
 size_t LCD_ILI9325D::write(uint8_t c)
