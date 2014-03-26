@@ -62,6 +62,7 @@ class LCD_SSD1306 : public LCD_Common, public SSD1306, public Print
 {
 public:
     void setCursor(byte column, byte line);
+	void setContrast(byte Contrast);
     void draw(const PROGMEM byte* buffer, byte width, byte height);
     size_t write(uint8_t c);
     void clear(byte x = 0, byte y = 0, byte width = 128, byte height = 64);

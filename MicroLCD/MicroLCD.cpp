@@ -636,3 +636,15 @@ void LCD_SSD1306::clear(byte x, byte y, byte width, byte height)
     setCursor(0, 0);
     TWBR = twbrbackup;
 }
+
+void LCD_SSD1306::setContrast(byte Contrast)
+{
+    // save I2C bitrate
+    uint8_t twbrbackup = TWBR;
+    TWBR = 18; // upgrade to 400KHz!
+
+    ssd1306_command(SSD1306_SETCONTRAST);
+	ssd1306_command(Contrast);
+
+    TWBR = twbrbackup;
+}
