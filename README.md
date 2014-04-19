@@ -65,6 +65,7 @@ Besides, it provides unified APIs for initializing and controlling the LCD, as w
 
 The code using the library can be extremely simple.
 
+    #include <SPI.h>
     #include <Wire.h>
     #include <MultiLCD.h>
 
