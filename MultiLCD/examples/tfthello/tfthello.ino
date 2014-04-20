@@ -11,7 +11,7 @@
 #include <MultiLCD.h>
 
 LCD_ILI9341 lcd; /* for 2.2" SPI TFT module */
-//LCD_ILI9325D lcd; /* for Itead 2.8" TFT shield */
+//LCD_ILI9325D lcd; /* for 2.8" TFT shield */
 
 static const PROGMEM uint8_t smile[48 * 48 / 8] = {
 0x00,0x00,0x00,0x00,0x00,0x00,0x80,0xC0,0xE0,0xF0,0xF8,0xF8,0xFC,0xFC,0xFE,0xFE,0x7E,0x7F,0x7F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x7F,0x7F,0x7E,0xFE,0xFE,0xFC,0xFC,0xF8,0xF8,0xF0,0xE0,0xC0,0x80,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -37,13 +37,8 @@ void loop()
 {
 	lcd.clear();
 	lcd.setTextColor(255, 0, 255);
+	lcd.setXY(40, 10);
 	lcd.draw(smile, 48, 48);
-
-    lcd.setCursor(100, 0);
-    lcd.setTextColor(0, 255, 0);
-	lcd.draw2x(tick, 16, 16);
-	lcd.setTextColor(255, 0, 0);
-	lcd.draw2x(cross, 16, 16);
 
 	lcd.setTextColor(255, 255, 255);
 	lcd.setCursor(0, 10);
@@ -74,6 +69,12 @@ void loop()
 	lcd.setCursor(0, 18);
 	lcd.setFont(FONT_SIZE_XLARGE);
 	lcd.printLong(12345678);
+
+    lcd.setXY(30, 200);
+    lcd.setTextColor(0, 255, 0);
+	lcd.draw2x(tick, 16, 16);
+	lcd.setTextColor(255, 0, 0);
+	lcd.draw2x(cross, 16, 16);
 
 	delay(10000);
 }
