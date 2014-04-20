@@ -56,11 +56,11 @@ Besides, it provides unified APIs for initializing and controlling the LCD, as w
 ```C++
 void begin(); /* initializing */
 void clear(); /* clear screen */
-void setCursor(uint16_t column, uint8_t line); /* set current cursor, column is in pixel */
+void setCursor(byte column, byte line); /* set current cursor, column is in pixel */
 void setFont(FONT_SIZE size); /* set font size */
-void printInt(unsigned int n); /* display a integer number */
-void printLong(unsigned long n); /* display a long number */
-void draw(const PROGMEM uint8_t* buffer, uint16_t x, uint16_t y, uint16_t width, uint16_t height); /* draw monochrome bitmap */
+void printInt(uint16_t value, int8_t padding = -1); /* display a integer number */
+void printLong(uint32_t value, int8_t padding = -1); /* display a long number */
+void draw(const PROGMEM byte* buffer, byte width, byte height); /* draw monochrome bitmap */
 ```
 
 Example
@@ -90,7 +90,7 @@ void setup()
 void loop()
 {
     lcd.clear();
-    lcd.draw(smile, 40, 8, 48, 48);
+    lcd.draw(smile, 48, 48);
     delay(2000);
 
     lcd.clear();
