@@ -223,9 +223,9 @@ public:
         m_color[0][0] = color & 0xff;
         m_color[0][1] = color >> 8;
     }
-    void clearLine(byte line)
+    void clearLine(byte line, int lc=1, int start=0)
     {
-        fill(0, line * TFT_LINE_HEIGHT, 320, 8);
+	    fill(start, 320, line*TFT_LINE_HEIGHT, (line+lc)*TFT_LINE_HEIGHT-1);
     }
     void begin (void);
     void setPixel(uint16_t poX, uint16_t poY,uint16_t color);
