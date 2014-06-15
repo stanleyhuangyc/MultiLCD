@@ -16,11 +16,11 @@ const PROGMEM uint8_t cross[16 *16 / 8] =
 void setup() {
   // set up LCD display
   lcd.begin();
-  lcd.setFont(FONT_SIZE_MEDIUM);
+  lcd.setFontSize(FONT_SIZE_MEDIUM);
   lcd.print("Analog input:");
   lcd.setCursor(160, 0);
   lcd.print("Button:");
-  lcd.setFont(FONT_SIZE_XLARGE);
+  lcd.setFontSize(FONT_SIZE_XLARGE);
   // set up pin mode
   pinMode(ANALOG_PIN, INPUT);
   pinMode(BUTTON_PIN, INPUT);
@@ -29,26 +29,27 @@ void setup() {
 }
 
 void loop() {
-  // display analog input value 
+  // display analog input value
   int value = analogRead(ANALOG_PIN);
-  lcd.setTextColor(RGB16_YELLOW);
+  lcd.setColor(RGB16_YELLOW);
   lcd.setCursor(0, 3);
   lcd.printInt(value, 4);
 
   // draw tick (when button is pressed) or cross (when button is not pressed)
   int btn = digitalRead(BUTTON_PIN);
+  lcd.setXY(160, 20);
   if (!btn) {
-    lcd.setTextColor(RGB16_GREEN);
-    lcd.draw2x(tick, 160, 20, 16, 16);
+    lcd.setColor(RGB16_GREEN);
+    lcd.draw(tick, 16, 16, 2);
     // reset button state
     digitalWrite(BUTTON_PIN, HIGH);
   } else {
-    lcd.setTextColor(RGB16_RED);
-    lcd.draw2x(cross, 160, 20, 16, 16);
+    lcd.setColor(RGB16_RED);
+    lcd.draw(cross, 16, 16, 2);
   }
-  
+
   // output analog value via serial UART
   Serial.println(value);
-  
+
   delay(50);
 }

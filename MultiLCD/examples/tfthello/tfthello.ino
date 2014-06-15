@@ -1,8 +1,8 @@
 /*************************************************************************
-* Demo sketch of Arduino Text Display Library for Multiple LCDs
+* Demo sketch for MultiLCD library
 * Distributed under GPL v2.0
-* Copyright (c) 2013 Stanley Huang <stanleyhuangyc@live.com>
-* All rights reserved.
+* (C)2013-2014 developed by Stanley Huang <stanleyhuangyc@gmail.com>
+* For more information, please visit http://arduinodev.com
 *************************************************************************/
 
 #include <Arduino.h>
@@ -10,8 +10,9 @@
 #include <SPI.h>
 #include <MultiLCD.h>
 
-LCD_ILI9341 lcd; /* for 2.2" SPI TFT module */
-//LCD_ILI9325D lcd; /* for 2.8" TFT shield */
+//LCD_ILI9341 lcd; /* for 2.2" SPI TFT LCD module */
+//LCD_ILI9325D lcd; /* for 2.8" TFT LCD shield */
+LCD_SSD1289 lcd; /* for 3.2" TFT LCD shield */
 
 static const PROGMEM uint8_t smile[48 * 48 / 8] = {
 0x00,0x00,0x00,0x00,0x00,0x00,0x80,0xC0,0xE0,0xF0,0xF8,0xF8,0xFC,0xFC,0xFE,0xFE,0x7E,0x7F,0x7F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x7F,0x7F,0x7E,0xFE,0xFE,0xFC,0xFC,0xF8,0xF8,0xF0,0xE0,0xC0,0x80,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -36,45 +37,45 @@ void setup()
 void loop()
 {
 	lcd.clear();
-	lcd.setTextColor(255, 0, 255);
+	lcd.setColor(255, 0, 255);
 	lcd.setXY(40, 10);
 	lcd.draw(smile, 48, 48);
 
-	lcd.setTextColor(255, 255, 255);
+	lcd.setColor(255, 255, 255);
 	lcd.setCursor(0, 10);
-	lcd.setFont(FONT_SIZE_SMALL);
+	lcd.setFontSize(FONT_SIZE_SMALL);
 	lcd.print("Hello, world!");
 
-	lcd.setTextColor(255, 255, 0);
+	lcd.setColor(255, 255, 0);
 	lcd.setCursor(0, 11);
-	lcd.setFont(FONT_SIZE_MEDIUM);
+	lcd.setFontSize(FONT_SIZE_MEDIUM);
 	lcd.print("Hello, world!");
 
-	lcd.setTextColor(255, 0, 0);
+	lcd.setColor(255, 0, 0);
 	lcd.setCursor(0, 13);
-	lcd.setFont(FONT_SIZE_SMALL);
+	lcd.setFontSize(FONT_SIZE_SMALL);
 	lcd.printLong(1234567890);
 
-	lcd.setTextColor(0, 255, 0);
+	lcd.setColor(0, 255, 0);
 	lcd.setCursor(0, 14);
-	lcd.setFont(FONT_SIZE_MEDIUM);
+	lcd.setFontSize(FONT_SIZE_MEDIUM);
 	lcd.printLong(1234567890);
 
-	lcd.setTextColor(0, 0, 255);
+	lcd.setColor(0, 0, 255);
 	lcd.setCursor(0, 16);
-	lcd.setFont(FONT_SIZE_LARGE);
+	lcd.setFontSize(FONT_SIZE_LARGE);
 	lcd.printLong(12345678);
 
-	lcd.setTextColor(0, 255, 255);
+	lcd.setColor(0, 255, 255);
 	lcd.setCursor(0, 18);
-	lcd.setFont(FONT_SIZE_XLARGE);
+	lcd.setFontSize(FONT_SIZE_XLARGE);
 	lcd.printLong(12345678);
 
     lcd.setXY(30, 200);
-    lcd.setTextColor(0, 255, 0);
-	lcd.draw2x(tick, 16, 16);
-	lcd.setTextColor(255, 0, 0);
-	lcd.draw2x(cross, 16, 16);
+    lcd.setColor(0, 255, 0);
+	lcd.draw(tick, 16, 16, 2);
+	lcd.setColor(255, 0, 0);
+	lcd.draw(cross, 16, 16, 2);
 
 	delay(10000);
 }

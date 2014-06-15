@@ -1,3 +1,10 @@
+/*************************************************************************
+* Arduino Text & Bitmap Display Library for multiple models of LCD display
+* Distributed under GPL v2.0
+* (C)2013-2014 developed by Stanley Huang <stanleyhuangyc@gmail.com>
+* For more information, please visit http://arduinodev.com
+*************************************************************************/
+
 #include <Arduino.h>
 #include <SPI.h>
 #include "MultiLCD.h"
@@ -241,8 +248,8 @@ void LCD_ILI9341::begin (void)
 	clear();
 
 	backlight(true);
-	setTextColor(0xffff);
-	SetBGColor(0);
+	setColor(0xffff);
+	setBackColor(0);
 }
 
 uint8_t LCD_ILI9341::readID(void)
@@ -487,7 +494,7 @@ void LCD_ILI9341::draw(const PROGMEM byte* buffer, uint16_t width, uint16_t heig
     m_x += width;
 }
 
-void LCD_ILI9341::draw2x(const PROGMEM byte* buffer, byte width, byte height)
+void LCD_ILI9341::draw(const PROGMEM byte* buffer, uint16_t width, uint16_t height, byte scaleX, byte ScaleY)
 {
     byte rows = height >> 3;
     setXY(m_y, m_y + height * 2 - 1, m_x, m_x + width * 2 - 1);

@@ -16,8 +16,8 @@ LCD_ILI9341 lcd;
 void setup()
 {
   lcd.begin();
-  lcd.setFont(FONT_SIZE_SMALL);
-  lcd.setTextColor(RGB16_YELLOW);
+  lcd.setFontSize(FONT_SIZE_SMALL);
+  lcd.setColor(RGB16_YELLOW);
   lcd.println("Initializing SD card...");
 
   pinMode(chipSelect, OUTPUT);
@@ -25,20 +25,20 @@ void setup()
   // we'll use the initialization code from the utility libraries
   // since we're just testing if the card is working!
   if (!card.init(SPI_FULL_SPEED, chipSelect)) {
-    lcd.setTextColor(RGB16_RED);
+    lcd.setColor(RGB16_RED);
     lcd.println("\nInitialization failed. Things to check:");
-    lcd.setTextColor(RGB16_WHITE);
+    lcd.setColor(RGB16_WHITE);
     lcd.println("* Is a card is inserted?");
     lcd.println("* Is your wiring correct?");
     lcd.println("* Does the chipSelect pin match your shield?");
     return;
   } else {
-    lcd.setTextColor(RGB16_CYAN);
+    lcd.setColor(RGB16_CYAN);
     lcd.println("Wiring is correct and a card is present.");
   }
 
   // print the type of card
-  lcd.setTextColor(RGB16_GREEN);
+  lcd.setColor(RGB16_GREEN);
   lcd.print("\nCard Type: ");
   switch(card.type()) {
     case SD_CARD_TYPE_SD1:
@@ -54,7 +54,7 @@ void setup()
       lcd.println("Unknown");
   }
 
-  lcd.setTextColor(RGB16_WHITE);
+  lcd.setColor(RGB16_WHITE);
   // Now we will try to open the 'volume'/'partition' - it should be FAT16 or FAT32
   if (!volume.init(card)) {
     lcd.println("Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
