@@ -31,6 +31,7 @@ Usage
 You need to include library header at the beginning of the sketch.
 
 ```C++
+#include <Wire.h>
 #include <MultiLCD.h>
 ```
 
