@@ -3,24 +3,27 @@ MultiLCD Library for Arduino
 
 _Written by Stanley Huang, distributed under GPL._
 
-MultiLCD is a highly optimized library designed for displaying characters and bitmaps on multiple models of Arduino display shields/modules with easy-to-use and unified API. It is developed with performance in first priority. Though supported models are not as many as some widely used Arduino display libraries (e.g. UTFT), it renders faster with simpler API.
+MultiLCD is an Arduino library designed for displaying characters and bitmaps on different models of Arduino LCD display shields/modules with easy-to-use and unified API. It is developed with performance in the first priority. For supporting a wide range of devices and providing additional rendering APIs, the new implementation inherits a modified version of UTFT library. That means most APIs of UTFT are accessible via MultiLCD library.
 
-Supported LCDs:
+The library embeds 2 types of font for ASCII characters (5x7, 8x16) and 4 types of fonts for digits (8x8, 8x16, 16x16, 16x24). It is extremely simple for display texts and numbers on desired position on a LCD screen with the library, while very little change in code is needed to switch from one LCD module to another. For more sophisticated drawing and rendering features, UTFT APIs can be used.
 
-* Freematics 2.2" TFT LCD shield (16-bit color)
-* IteadStudio 2.8" TFT LCD shield (16-bit color)
-* ILI9341 based TFT LCD shields (SPI)
-* ILI9325D based TFT LCD shields
-* SSD1306 based OLED module (monochrome)
-* SH1106 based OLED module (monochrome)
-* Nokia 3310/5100 module (monochrome)
-* DFRobot LCD4884 shield (monochrome)
+MultiLCD supports several color TFT LCD display shields/modules including:
 
-To obtain any of above hardware, please visit http://arduinodev.com/store/?route=product/category&path=17.
+    Freematics 3.2" TFT LCD shield (320x240@16bpp)
+    Freematics 2.2" TFT LCD shield (320x240@16bpp)
+    IteadStudio 2.8" TFT LCD shield (320x240@16bpp)
+    All SSD1289 based TFT LCD
+    All ILI9341 based TFT LCD (SPI)
+    All ILI9325D based TFT LCD
 
-The library embeds font data for ASCII characters (5x7 and 8x16) and digits (8x8, 16x16, 16x24). It is extremely simple for display texts and numbers on desired position on a LCD screen with the library, while very little change in code is needed to switch from one LCD module to another.
+MultiLCD has dumped support for monochrome LCD and OLED display since a while ago since starting to inherit UTFT library APIs. The support has been moved to MicroLCD library which shares the same APIs except for the UTFT APIs. It is also more optimized for Arduino with smaller program memory (Arduino Micro, Arduino Nano, Arduino Mini etc.). MicroLCD supports following monochrome display shields/modules:
 
-![Arduino LCD shields](http://arduinodev.com/wp-content/uploads/2013/03/arduino_lcd_shields-300x195.jpg)
+    DFRobot LCD4884 shield (84x48)
+    IteadStudio 0.96" OLED module (128x64)
+    Freematics 1.3" OLED module (132x64)
+    All Nokia 3310/5100 compatible LCD module (84x48)
+    All SSD1306 based OLED module (128x64)
+    All SH1106 based OLED module (132x64)
 
 Usage
 -----
@@ -35,11 +38,12 @@ And use one of following declarations before your code:
 
 Model                   | Code
 ----------------------- | ------------------------
-```LCD_SSD1306 lcd;```  | SSD1306 OLED module
-```LCD_PCD8544 lcd;```  | LCD4884 shield
-```LCD_PCD8544 lcd;```  | Nokia 5100 module
-```LCD_ILI9325D lcd;``` | ILI9325D shield
-```LCD_ILI9341 lcd;```  | ILI9341 based TFT LCD module
+```LCD_SSD1289 lcd;```  | SSD1289 based TFT LCD
+```LCD_ILI9325D lcd;``` | ILI9325D based TFT LCD
+```LCD_ILI9341 lcd;```  | ILI9341 based TFT LCD
+```LCD_PCD8544 lcd;```  | PCD8544 based LCD
+```LCD_SH1106 lcd;```   | SH1106 based OLED
+```LCD_SSD1306 lcd;```  | SSD1306 based OLED
 
 The library class inherits the Print class of Arduino, so that you can display texts on LCD with standard Arduino functions like this:
 
@@ -57,7 +61,9 @@ Besides, it provides unified APIs for initializing and controlling the LCD, as w
 void begin(); /* initializing */
 void clear(); /* clear screen */
 void setCursor(byte column, byte line); /* set current cursor, column is in pixel */
-void setFont(FONT_SIZE size); /* set font size */
+void setFontSize(FONT_SIZE size); /* set font size */
+void setColor(byte r, byte g, byte b); /* set text color, not available in MicroLCD */
+void setBackColor(byte r, byte g, byte b); /* set background color, not available in MicroLCD */
 void printInt(uint16_t value, int8_t padding = -1); /* display a integer number */
 void printLong(uint32_t value, int8_t padding = -1); /* display a long number */
 void draw(const PROGMEM byte* buffer, byte width, byte height); /* draw monochrome bitmap */
@@ -67,9 +73,8 @@ Example
 -------
 
 ```C++
-#include <SPI.h>
 #include <Wire.h>
-#include <MultiLCD.h>
+#include <MicroLCD.h>
 
 LCD_SSD1306 lcd; /* for SSD1306 OLED module */
 
@@ -95,27 +100,27 @@ void loop()
 
     lcd.clear();
     lcd.setCursor(0, 0);
-    lcd.setFont(FONT_SIZE_SMALL);
+    lcd.setFontSize(FONT_SIZE_SMALL);
     lcd.print("Hello, world!");
 
     lcd.setCursor(0, 1);
-    lcd.setFont(FONT_SIZE_MEDIUM);
+    lcd.setFontSize(FONT_SIZE_MEDIUM);
     lcd.print("Hello, world!");
 
     lcd.setCursor(0, 3);
-    lcd.setFont(FONT_SIZE_SMALL);
+    lcd.setFontSize(FONT_SIZE_SMALL);
     lcd.printLong(12345678);
 
     lcd.setCursor(64, 3);
-    lcd.setFont(FONT_SIZE_MEDIUM);
+    lcd.setFontSize(FONT_SIZE_MEDIUM);
     lcd.printLong(12345678);
 
     lcd.setCursor(0, 4);
-    lcd.setFont(FONT_SIZE_LARGE);
+    lcd.setFontSize(FONT_SIZE_LARGE);
     lcd.printLong(12345678);
 
     lcd.setCursor(0, 6);
-    lcd.setFont(FONT_SIZE_XLARGE);
+    lcd.setFontSize(FONT_SIZE_XLARGE);
     lcd.printLong(12345678);
 
     delay(3000);
