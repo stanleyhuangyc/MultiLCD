@@ -32,10 +32,6 @@ static const PROGMEM uint8_t cross[16 * 16 / 8] =
 void setup()
 {
 	lcd.begin();
-}
-
-void loop()
-{
 	lcd.clear();
 	lcd.setColor(255, 0, 255);
 	lcd.setXY(40, 10);
@@ -71,11 +67,13 @@ void loop()
 	lcd.setFontSize(FONT_SIZE_XLARGE);
 	lcd.printLong(12345678);
 
-    lcd.setXY(30, 200);
-    lcd.setColor(0, 255, 0);
+	lcd.setXY(30, 200);
+	lcd.setColor(0, 255, 0);
 	lcd.draw(tick, 16, 16, 2);
 	lcd.setColor(255, 0, 0);
 	lcd.draw(cross, 16, 16, 2);
+}
 
-	delay(10000);
+void loop()
+{
 }

@@ -5,6 +5,7 @@
 * For more information, please visit http://arduinodev.com
 *************************************************************************/
 
+#include <Arduino.h>
 #include <UTFT.h>
 
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168P__)

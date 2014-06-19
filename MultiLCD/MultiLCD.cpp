@@ -1,5 +1,5 @@
 /*************************************************************************
-* Arduino Text & Bitmap Display Library for multiple models of LCD display
+* Arduino Text & Bitmap Display Library for multiple models of color LCD display
 * Distributed under GPL v2.0
 * Copyright (c) 2013-2014 Stanley Huang <stanleyhuangyc@gmail.com>
 * All rights reserved.
