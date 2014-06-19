@@ -1,13 +1,14 @@
 /*************************************************************************
-* Arduino Text Display Library for Multiple LCDs
+* Arduino Text & Bitmap Display Library for multiple models of monochrome LCD display
 * Distributed under GPL v2.0
-* Copyright (c) 2013 Stanley Huang <stanleyhuangyc@live.com>
+* Copyright (c) 2013-2014 Stanley Huang <stanleyhuangyc@gmail.com>
 * All rights reserved.
+* For more information, please visit http://arduinodev.com
 *************************************************************************/
 
-#if !defined(__AVR_ATmega2560__) && !defined(__AVR_ATmega1280__) && !defined(__AVR_ATmega644P__)
+#include <Arduino.h>
+
 //#define MEMORY_SAVING
-#endif
 
 typedef enum {
     FONT_SIZE_SMALL = 0,
@@ -32,7 +33,7 @@ class LCD_Common
 {
 public:
     LCD_Common():m_font(FONT_SIZE_SMALL),m_flags(0) {}
-    void setFont(FONT_SIZE size) { m_font = size; }
+    void setFontSize(FONT_SIZE size) { m_font = size; }
     void setFlags(byte flags) { m_flags = flags; }
     virtual void backlight(bool on) {}
     virtual void draw(const PROGMEM byte* buffer, byte width, byte height) {}
@@ -93,3 +94,26 @@ private:
     byte m_col;
     byte m_row;
 };
+
+#include "PCD8544.h"
+
+class LCD_PCD8544 : public LCD_Common, public PCD8544
+{
+public:
+    byte getLines() { return 6; }
+    byte getCols() { return 14; }
+    void backlight(bool on)
+    {
+        pinMode(7, OUTPUT);
+        digitalWrite(7, on ? HIGH : LOW);
+    }
+    void clearLine(byte line)
+    {
+        setCursor(0, line);
+        for (byte i = 14; i > 0; i--) write(' ');
+    }
+    void draw(const PROGMEM byte* buffer, byte width, byte height);
+private:
+    void writeDigit(byte n);
+};
+
