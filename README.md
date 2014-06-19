@@ -130,3 +130,8 @@ void loop()
 Result:
 
 ![Drawing bitmap on SSD1306 OLED](http://www.arduinodev.com/wp-content/uploads/2013/05/oled_smile-300x247.jpg)
+
+Real effect of using MultiLCD with a SSD1289 based 3.2" TFT LCD display:
+
+![Freematics TFT LCD touch shield](http://freematics.com/pages/wp-content/uploads/2014/06/DSC04120.jpg)
+Learn more: http://freematics.com/pages/products/tft-lcd-shield-3-2/
