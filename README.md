@@ -137,5 +137,4 @@ Learn more: http://freematics.com/pages/products/obd-kit3/
 
 Support
 -------
-Please use the following forum for discussion or getting support.
-http://freematics.com/forum/viewforum.php?f=8
+Please use this forum for discussion or getting support - http://freematics.com/forum/viewforum.php?f=8
