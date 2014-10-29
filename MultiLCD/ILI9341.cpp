@@ -1,7 +1,7 @@
 /*************************************************************************
-* Arduino Text & Bitmap Display Library for multiple models of LCD display
+* Arduino Text & Bitmap Display Library for color LCDs
 * Distributed under GPL v2.0
-* (C)2013-2014 developed by Stanley Huang <stanleyhuangyc@gmail.com>
+* Developed by Stanley Huang <stanleyhuangyc@gmail.com>
 * For more information, please visit http://arduinodev.com
 *************************************************************************/
 
@@ -247,7 +247,7 @@ void LCD_ILI9341::begin (void)
 	sendCMD(0x2c);
 	clear();
 
-	backlight(true);
+	setBackLight(255);
 	setColor(0xffff);
 	setBackColor(0);
 }
@@ -349,9 +349,9 @@ void LCD_ILI9341::setPixel(uint16_t poX, uint16_t poY,uint16_t color)
     sendData(color);
 }
 
-void LCD_ILI9341::backlight(bool on)
+void LCD_ILI9341::setBackLight(byte brightness)
 {
-    digitalWrite(PIN_LED, on);
+    digitalWrite(PIN_LED, brightness ? HIGH : LOW);
 }
 
 void LCD_ILI9341::clearPixels(uint16_t pixels)
