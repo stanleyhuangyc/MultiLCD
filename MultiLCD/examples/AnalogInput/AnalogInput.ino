@@ -1,5 +1,4 @@
 #include <SPI.h>
-#include <Wire.h>
 #include <MultiLCD.h>
 
 LCD_ILI9341 lcd; /* for 2.2" SPI TFT module */

@@ -1,6 +1,5 @@
 #include <SPI.h>
 #include <SD.h>
-#include <Wire.h>
 #include <MultiLCD.h>
 
 // set up variables using the SD utility library functions:
