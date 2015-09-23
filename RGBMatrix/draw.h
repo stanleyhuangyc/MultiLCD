@@ -1,0 +1,14 @@
+void DispShowChar(char chr, byte rgb[3],char bias);
+void DispShowColor(byte color[]);
+void DispShowPic(byte Index);
+void display(char c, char bias_x, char bias_y, byte color[]);
+void displayDigit3x5(byte val, char bias_x, char bias_y, byte color[]);
+void displayDigit3x7(byte val, char bias_x, char bias_y, byte color[]);
+void displayVBar(uint8_t val, uint8_t x);
+void displayHBar(uint8_t val, uint8_t y, uint8_t style);
+void FillUp(byte value, byte color[], char mirrored);
+void SetFadePixel(uint8_t x, uint8_t y, uint8_t color[], uint8_t shift);
+void GetRGB8(uint8_t index, uint8_t val, uint8_t color[]);
+void GetRGB(uint8_t index, uint16_t val, uint8_t color[]);
+uint8_t* GetColor(uint8_t index, uint8_t offset, uint8_t color[]);
+uint8_t limit8(int val);
