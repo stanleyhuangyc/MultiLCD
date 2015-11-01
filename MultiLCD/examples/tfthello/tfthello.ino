@@ -1,7 +1,7 @@
 /*************************************************************************
 * Demo sketch for MultiLCD library
 * Distributed under GPL v2.0
-* (C)2013-2014 developed by Stanley Huang <stanleyhuangyc@gmail.com>
+* (C)2013-2015 developed by Stanley Huang <stanleyhuangyc@gmail.com>
 * For more information, please visit http://arduinodev.com
 *************************************************************************/
 
@@ -9,9 +9,10 @@
 #include <SPI.h>
 #include <MultiLCD.h>
 
-//LCD_ILI9341 lcd; /* for 2.2" SPI TFT LCD module */
-//LCD_ILI9325D lcd; /* for 2.8" TFT LCD shield */
-LCD_SSD1289 lcd; /* for 3.2" TFT LCD shield */
+//LCD_ILI9341 lcd; /* for 2.2" SPI LCD */
+//LCD_ILI9325D lcd; /* for 2.8" LCD */
+LCD_SSD1289 lcd; /* for 3.2" LCD */
+//LCD_R61581 lcd; /* for 3.5" LCD */
 
 static const PROGMEM uint8_t smile[48 * 48 / 8] = {
 0x00,0x00,0x00,0x00,0x00,0x00,0x80,0xC0,0xE0,0xF0,0xF8,0xF8,0xFC,0xFC,0xFE,0xFE,0x7E,0x7F,0x7F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x7F,0x7F,0x7E,0xFE,0xFE,0xFC,0xFC,0xF8,0xF8,0xF0,0xE0,0xC0,0x80,0x00,0x00,0x00,0x00,0x00,0x00,
