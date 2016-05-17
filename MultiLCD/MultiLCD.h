@@ -249,12 +249,16 @@ public:
         clear(0, line * TFT_LINE_HEIGHT, disp_y_size, 8);
     }
     void setBackLight(byte brightness);
+    void drawPixel(uint16_t poX, uint16_t poY, uint16_t color);
+    byte getTouchData(int& x, int& y);
 private:
     void setXY(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
     void writeDigit(byte n);
     void clearPixels(uint32_t pixels);
     void Enable();
     void Disable();
+    void shiftOutTouchData(unsigned char data);
+    unsigned int shiftInTouchData();
 };
 
 class LCD_R61581 : public UTFT, public LCD_Common, public Print
